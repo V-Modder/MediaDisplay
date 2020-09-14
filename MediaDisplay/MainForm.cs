@@ -44,7 +44,7 @@ namespace MediaDisplay {
 
         public MainForm() {
             WindowState = FormWindowState.Minimized;
-            externalDisplay = new ExternalDisplay("http://192.168.66.49:5000/sync");
+            externalDisplay = new ExternalDisplay("127.0.0.1", 8765);
             externalDisplay.OnEventReceived += ExternalDisplay_EventReceived;
             InitializeComponent();
             panels = new List<Panel>() {
@@ -76,6 +76,11 @@ namespace MediaDisplay {
             networkMonitor.StartMonitoring();
         }
 
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            networkMonitor.StopMonitoring();
+            externalDisplay.Dispose();
+        }
+
         private void ExternalDisplay_EventReceived(object sender, ExternalEventArgs e) {
             if(e.Action == ExternalAction.click) {
                 BeginInvoke(new MethodInvoker(delegate {
@@ -100,7 +105,6 @@ namespace MediaDisplay {
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
-            networkMonitor.StopMonitoring();
             Close();
         }
 

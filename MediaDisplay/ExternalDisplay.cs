@@ -1,25 +1,28 @@
 ﻿using Newtonsoft.Json;
-using RestSharp;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Net;
+using System.Net.WebSockets;
 using System.Threading;
+using Websocket.Client;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace MediaDisplay {
-    class ExternalDisplay {
+    class ExternalDisplay : IDisposable {
 
-        private string url;
-        private RestClient client;
+        private WebsocketClient websocket;
         public event EventHandler<ExternalEventArgs> OnEventReceived;
         public delegate void EventReceivedEventHandler<ExternalEventArgs>(object sender, ExternalEventArgs e);
 
-        public ExternalDisplay(string url) {
-            this.url = url;
-            client = new RestClient(url);
+        public ExternalDisplay(string ip, int port) {
+            websocket = new WebsocketClient(new Uri($"ws://{ip}:{port}"));
+            websocket.IsReconnectionEnabled = true;
+            websocket.ReconnectionHappened.Subscribe(info =>
+               Console.WriteLine($"Reconnection happened, type: {info.Type}"));
+
+            websocket.MessageReceived.Subscribe(msg => messageReceived(msg));
+            websocket.StartOrFail().Wait();
         }
 
         private static ImageCodecInfo GetEncoder(ImageFormat format) {
@@ -30,6 +33,14 @@ namespace MediaDisplay {
                 }
             }
             return null;
+        }
+
+        private void messageReceived(ResponseMessage msg) {
+            var action = JsonConvert.DeserializeObject<JsonAction>(msg.Text);
+            if (action.Action != null) {
+                ExternalEventArgs args = new ExternalEventArgs(action);
+                EventReceived(args);
+            }
         }
 
         private static byte[] ConvertToBytes(Bitmap image) {
@@ -45,20 +56,12 @@ namespace MediaDisplay {
             Bitmap imageClone = new Bitmap(image);
             new Thread(() => {
                 byte[] data = ConvertToBytes(imageClone);
-                string answer;
+                
                 try {
-                    answer = callService(data);
+                    callService(data);
                 }
                 finally {
                     imageClone.Dispose();
-                }
-
-                if(answer != null) {
-                    var action = JsonConvert.DeserializeObject<JsonAction>(answer);
-                    if (action.Action != null) {
-                        ExternalEventArgs args = new ExternalEventArgs(action);
-                        EventReceived(args);
-                    }
                 }
             }).Start(); 
         }
@@ -68,29 +71,15 @@ namespace MediaDisplay {
             handler?.Invoke(this, e);
         }
 
-        private string callService(byte[] data) {
-            RestClient client = new RestClient(url);
-            RestRequest request = new RestRequest(Method.POST);
-            request.AddFileBytes("render_image", data, "render_image.jpg", "image/jpeg");
-            //request.Timeout = 2000;
+        private void callService(byte[] data) {
+            websocket.Send(data);
+        }
 
-            string content;
-            try { 
-                var response = client.Execute(request);
-                if (response.StatusCode != HttpStatusCode.OK) {
-                    return null;
-                }
-                content = response.Content;
-            }
-            catch(Exception e) {
-                Console.WriteLine(e.Message);
-                throw e;
-            }
-            finally {
-                 data = null;
-            }
-
-            return content;
+        public void Dispose() {
+            Console.WriteLine("websocker close requested");
+            websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop").Wait();
+            websocket.Dispose();
+            Console.WriteLine("websocker closed");
         }
     }
 }

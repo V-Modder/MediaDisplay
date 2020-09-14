@@ -33,6 +33,15 @@
             this.pan_preview = new System.Windows.Forms.Panel();
             this.lbl_room_temp = new System.Windows.Forms.Label();
             this.pan_1 = new System.Windows.Forms.Panel();
+            this.pgb_gpu_mem_load = new MediaDisplay.GaugeProgressBar();
+            this.pgb_cpu_load_1 = new MediaDisplay.GaugeProgressBar();
+            this.pgb_cpu_load_2 = new MediaDisplay.GaugeProgressBar();
+            this.pgb_cpu_load_3 = new MediaDisplay.GaugeProgressBar();
+            this.pgb_cpu_load_4 = new MediaDisplay.GaugeProgressBar();
+            this.pgb_cpu_load_5 = new MediaDisplay.GaugeProgressBar();
+            this.pgb_cpu_load_6 = new MediaDisplay.GaugeProgressBar();
+            this.pgb_memory_load = new MediaDisplay.GaugeProgressBar();
+            this.pgb_gpu_load = new MediaDisplay.GaugeProgressBar();
             this.lbl_gpu_temp = new System.Windows.Forms.Label();
             this.lbl_net_up = new System.Windows.Forms.Label();
             this.lbl_net_down = new System.Windows.Forms.Label();
@@ -61,15 +70,6 @@
             this.lbl_frames = new System.Windows.Forms.Label();
             this.lbl_frames_set = new System.Windows.Forms.Label();
             this.clockTimer = new System.Windows.Forms.Timer(this.components);
-            this.pgb_gpu_mem_load = new MediaDisplay.GaugeProgressBar();
-            this.pgb_cpu_load_1 = new MediaDisplay.GaugeProgressBar();
-            this.pgb_cpu_load_2 = new MediaDisplay.GaugeProgressBar();
-            this.pgb_cpu_load_3 = new MediaDisplay.GaugeProgressBar();
-            this.pgb_cpu_load_4 = new MediaDisplay.GaugeProgressBar();
-            this.pgb_cpu_load_5 = new MediaDisplay.GaugeProgressBar();
-            this.pgb_cpu_load_6 = new MediaDisplay.GaugeProgressBar();
-            this.pgb_memory_load = new MediaDisplay.GaugeProgressBar();
-            this.pgb_gpu_load = new MediaDisplay.GaugeProgressBar();
             this.contextMenuStrip.SuspendLayout();
             this.pan_preview.SuspendLayout();
             this.pan_1.SuspendLayout();
@@ -165,6 +165,168 @@
             this.pan_1.Name = "pan_1";
             this.pan_1.Size = new System.Drawing.Size(800, 417);
             this.pan_1.TabIndex = 2;
+            // 
+            // pgb_gpu_mem_load
+            // 
+            this.pgb_gpu_mem_load.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_gpu_mem_load.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_gpu_mem_load.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_gpu_mem_load.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_gpu_mem_load.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_gpu_mem_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_gpu_mem_load.ForeColor = System.Drawing.Color.White;
+            this.pgb_gpu_mem_load.HighThreshold = 80;
+            this.pgb_gpu_mem_load.LimitThreshold = 90;
+            this.pgb_gpu_mem_load.Location = new System.Drawing.Point(303, 211);
+            this.pgb_gpu_mem_load.Name = "pgb_gpu_mem_load";
+            this.pgb_gpu_mem_load.Size = new System.Drawing.Size(130, 130);
+            this.pgb_gpu_mem_load.TabIndex = 17;
+            this.pgb_gpu_mem_load.Text = "gaugeProgressBar9";
+            this.pgb_gpu_mem_load.Value = 50;
+            // 
+            // pgb_cpu_load_1
+            // 
+            this.pgb_cpu_load_1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_cpu_load_1.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_cpu_load_1.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_cpu_load_1.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_cpu_load_1.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_cpu_load_1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_cpu_load_1.ForeColor = System.Drawing.Color.White;
+            this.pgb_cpu_load_1.HighThreshold = 80;
+            this.pgb_cpu_load_1.LimitThreshold = 90;
+            this.pgb_cpu_load_1.Location = new System.Drawing.Point(4, 41);
+            this.pgb_cpu_load_1.Name = "pgb_cpu_load_1";
+            this.pgb_cpu_load_1.Size = new System.Drawing.Size(130, 130);
+            this.pgb_cpu_load_1.TabIndex = 0;
+            this.pgb_cpu_load_1.Text = "gaugeProgressBar1";
+            this.pgb_cpu_load_1.Value = 50;
+            // 
+            // pgb_cpu_load_2
+            // 
+            this.pgb_cpu_load_2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_cpu_load_2.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_cpu_load_2.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_cpu_load_2.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_cpu_load_2.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_cpu_load_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_cpu_load_2.ForeColor = System.Drawing.Color.White;
+            this.pgb_cpu_load_2.HighThreshold = 80;
+            this.pgb_cpu_load_2.LimitThreshold = 90;
+            this.pgb_cpu_load_2.Location = new System.Drawing.Point(134, 41);
+            this.pgb_cpu_load_2.Name = "pgb_cpu_load_2";
+            this.pgb_cpu_load_2.Size = new System.Drawing.Size(130, 130);
+            this.pgb_cpu_load_2.TabIndex = 1;
+            this.pgb_cpu_load_2.Text = "gaugeProgressBar2";
+            this.pgb_cpu_load_2.Value = 50;
+            // 
+            // pgb_cpu_load_3
+            // 
+            this.pgb_cpu_load_3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_cpu_load_3.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_cpu_load_3.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_cpu_load_3.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_cpu_load_3.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_cpu_load_3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_cpu_load_3.ForeColor = System.Drawing.Color.White;
+            this.pgb_cpu_load_3.HighThreshold = 80;
+            this.pgb_cpu_load_3.LimitThreshold = 90;
+            this.pgb_cpu_load_3.Location = new System.Drawing.Point(264, 41);
+            this.pgb_cpu_load_3.Name = "pgb_cpu_load_3";
+            this.pgb_cpu_load_3.Size = new System.Drawing.Size(130, 130);
+            this.pgb_cpu_load_3.TabIndex = 2;
+            this.pgb_cpu_load_3.Text = "gaugeProgressBar3";
+            this.pgb_cpu_load_3.Value = 50;
+            // 
+            // pgb_cpu_load_4
+            // 
+            this.pgb_cpu_load_4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_cpu_load_4.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_cpu_load_4.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_cpu_load_4.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_cpu_load_4.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_cpu_load_4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_cpu_load_4.ForeColor = System.Drawing.Color.White;
+            this.pgb_cpu_load_4.HighThreshold = 80;
+            this.pgb_cpu_load_4.LimitThreshold = 90;
+            this.pgb_cpu_load_4.Location = new System.Drawing.Point(394, 41);
+            this.pgb_cpu_load_4.Name = "pgb_cpu_load_4";
+            this.pgb_cpu_load_4.Size = new System.Drawing.Size(130, 130);
+            this.pgb_cpu_load_4.TabIndex = 3;
+            this.pgb_cpu_load_4.Text = "gaugeProgressBar4";
+            this.pgb_cpu_load_4.Value = 50;
+            // 
+            // pgb_cpu_load_5
+            // 
+            this.pgb_cpu_load_5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_cpu_load_5.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_cpu_load_5.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_cpu_load_5.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_cpu_load_5.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_cpu_load_5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_cpu_load_5.ForeColor = System.Drawing.Color.White;
+            this.pgb_cpu_load_5.HighThreshold = 80;
+            this.pgb_cpu_load_5.LimitThreshold = 90;
+            this.pgb_cpu_load_5.Location = new System.Drawing.Point(530, 41);
+            this.pgb_cpu_load_5.Name = "pgb_cpu_load_5";
+            this.pgb_cpu_load_5.Size = new System.Drawing.Size(130, 130);
+            this.pgb_cpu_load_5.TabIndex = 4;
+            this.pgb_cpu_load_5.Text = "gaugeProgressBar5";
+            this.pgb_cpu_load_5.Value = 50;
+            // 
+            // pgb_cpu_load_6
+            // 
+            this.pgb_cpu_load_6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_cpu_load_6.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_cpu_load_6.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_cpu_load_6.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_cpu_load_6.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_cpu_load_6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_cpu_load_6.ForeColor = System.Drawing.Color.White;
+            this.pgb_cpu_load_6.HighThreshold = 80;
+            this.pgb_cpu_load_6.LimitThreshold = 90;
+            this.pgb_cpu_load_6.Location = new System.Drawing.Point(654, 41);
+            this.pgb_cpu_load_6.Name = "pgb_cpu_load_6";
+            this.pgb_cpu_load_6.Size = new System.Drawing.Size(130, 130);
+            this.pgb_cpu_load_6.TabIndex = 5;
+            this.pgb_cpu_load_6.Text = "gaugeProgressBar6";
+            this.pgb_cpu_load_6.Value = 50;
+            // 
+            // pgb_memory_load
+            // 
+            this.pgb_memory_load.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_memory_load.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_memory_load.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_memory_load.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_memory_load.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_memory_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_memory_load.ForeColor = System.Drawing.Color.White;
+            this.pgb_memory_load.HighThreshold = 80;
+            this.pgb_memory_load.LimitThreshold = 90;
+            this.pgb_memory_load.Location = new System.Drawing.Point(4, 211);
+            this.pgb_memory_load.Name = "pgb_memory_load";
+            this.pgb_memory_load.Size = new System.Drawing.Size(130, 130);
+            this.pgb_memory_load.TabIndex = 13;
+            this.pgb_memory_load.Text = "gaugeProgressBar7";
+            this.pgb_memory_load.Value = 50;
+            // 
+            // pgb_gpu_load
+            // 
+            this.pgb_gpu_load.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
+            this.pgb_gpu_load.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
+            this.pgb_gpu_load.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.pgb_gpu_load.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
+            this.pgb_gpu_load.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.pgb_gpu_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
+            this.pgb_gpu_load.ForeColor = System.Drawing.Color.White;
+            this.pgb_gpu_load.HighThreshold = 80;
+            this.pgb_gpu_load.LimitThreshold = 90;
+            this.pgb_gpu_load.Location = new System.Drawing.Point(159, 211);
+            this.pgb_gpu_load.Name = "pgb_gpu_load";
+            this.pgb_gpu_load.Size = new System.Drawing.Size(130, 130);
+            this.pgb_gpu_load.TabIndex = 16;
+            this.pgb_gpu_load.Text = "gaugeProgressBar8";
+            this.pgb_gpu_load.Value = 50;
             // 
             // lbl_gpu_temp
             // 
@@ -443,7 +605,7 @@
             this.trb_frames.Size = new System.Drawing.Size(169, 45);
             this.trb_frames.SmallChange = 5;
             this.trb_frames.TabIndex = 3;
-            this.trb_frames.Value = 1;
+            this.trb_frames.Value = 2;
             this.trb_frames.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // lbl_frames
@@ -464,175 +626,13 @@
             this.lbl_frames_set.Name = "lbl_frames_set";
             this.lbl_frames_set.Size = new System.Drawing.Size(20, 24);
             this.lbl_frames_set.TabIndex = 5;
-            this.lbl_frames_set.Text = "1";
+            this.lbl_frames_set.Text = "2";
             // 
             // clockTimer
             // 
             this.clockTimer.Enabled = true;
             this.clockTimer.Interval = 1000;
             this.clockTimer.Tick += new System.EventHandler(this.clockTimer_Tick);
-            // 
-            // pgb_gpu_mem_load
-            // 
-            this.pgb_gpu_mem_load.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_gpu_mem_load.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_gpu_mem_load.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_gpu_mem_load.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_gpu_mem_load.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_gpu_mem_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_gpu_mem_load.ForeColor = System.Drawing.Color.White;
-            this.pgb_gpu_mem_load.HighThreshold = 80;
-            this.pgb_gpu_mem_load.LimitThreshold = 90;
-            this.pgb_gpu_mem_load.Location = new System.Drawing.Point(303, 211);
-            this.pgb_gpu_mem_load.Name = "pgb_gpu_mem_load";
-            this.pgb_gpu_mem_load.Size = new System.Drawing.Size(130, 130);
-            this.pgb_gpu_mem_load.TabIndex = 17;
-            this.pgb_gpu_mem_load.Text = "gaugeProgressBar9";
-            this.pgb_gpu_mem_load.Value = 50;
-            // 
-            // pgb_cpu_load_1
-            // 
-            this.pgb_cpu_load_1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_cpu_load_1.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_cpu_load_1.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_cpu_load_1.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_cpu_load_1.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_cpu_load_1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_cpu_load_1.ForeColor = System.Drawing.Color.White;
-            this.pgb_cpu_load_1.HighThreshold = 80;
-            this.pgb_cpu_load_1.LimitThreshold = 90;
-            this.pgb_cpu_load_1.Location = new System.Drawing.Point(4, 41);
-            this.pgb_cpu_load_1.Name = "pgb_cpu_load_1";
-            this.pgb_cpu_load_1.Size = new System.Drawing.Size(130, 130);
-            this.pgb_cpu_load_1.TabIndex = 0;
-            this.pgb_cpu_load_1.Text = "gaugeProgressBar1";
-            this.pgb_cpu_load_1.Value = 50;
-            // 
-            // pgb_cpu_load_2
-            // 
-            this.pgb_cpu_load_2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_cpu_load_2.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_cpu_load_2.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_cpu_load_2.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_cpu_load_2.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_cpu_load_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_cpu_load_2.ForeColor = System.Drawing.Color.White;
-            this.pgb_cpu_load_2.HighThreshold = 80;
-            this.pgb_cpu_load_2.LimitThreshold = 90;
-            this.pgb_cpu_load_2.Location = new System.Drawing.Point(134, 41);
-            this.pgb_cpu_load_2.Name = "pgb_cpu_load_2";
-            this.pgb_cpu_load_2.Size = new System.Drawing.Size(130, 130);
-            this.pgb_cpu_load_2.TabIndex = 1;
-            this.pgb_cpu_load_2.Text = "gaugeProgressBar2";
-            this.pgb_cpu_load_2.Value = 50;
-            // 
-            // pgb_cpu_load_3
-            // 
-            this.pgb_cpu_load_3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_cpu_load_3.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_cpu_load_3.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_cpu_load_3.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_cpu_load_3.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_cpu_load_3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_cpu_load_3.ForeColor = System.Drawing.Color.White;
-            this.pgb_cpu_load_3.HighThreshold = 80;
-            this.pgb_cpu_load_3.LimitThreshold = 90;
-            this.pgb_cpu_load_3.Location = new System.Drawing.Point(264, 41);
-            this.pgb_cpu_load_3.Name = "pgb_cpu_load_3";
-            this.pgb_cpu_load_3.Size = new System.Drawing.Size(130, 130);
-            this.pgb_cpu_load_3.TabIndex = 2;
-            this.pgb_cpu_load_3.Text = "gaugeProgressBar3";
-            this.pgb_cpu_load_3.Value = 50;
-            // 
-            // pgb_cpu_load_4
-            // 
-            this.pgb_cpu_load_4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_cpu_load_4.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_cpu_load_4.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_cpu_load_4.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_cpu_load_4.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_cpu_load_4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_cpu_load_4.ForeColor = System.Drawing.Color.White;
-            this.pgb_cpu_load_4.HighThreshold = 80;
-            this.pgb_cpu_load_4.LimitThreshold = 90;
-            this.pgb_cpu_load_4.Location = new System.Drawing.Point(394, 41);
-            this.pgb_cpu_load_4.Name = "pgb_cpu_load_4";
-            this.pgb_cpu_load_4.Size = new System.Drawing.Size(130, 130);
-            this.pgb_cpu_load_4.TabIndex = 3;
-            this.pgb_cpu_load_4.Text = "gaugeProgressBar4";
-            this.pgb_cpu_load_4.Value = 50;
-            // 
-            // pgb_cpu_load_5
-            // 
-            this.pgb_cpu_load_5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_cpu_load_5.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_cpu_load_5.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_cpu_load_5.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_cpu_load_5.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_cpu_load_5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_cpu_load_5.ForeColor = System.Drawing.Color.White;
-            this.pgb_cpu_load_5.HighThreshold = 80;
-            this.pgb_cpu_load_5.LimitThreshold = 90;
-            this.pgb_cpu_load_5.Location = new System.Drawing.Point(530, 41);
-            this.pgb_cpu_load_5.Name = "pgb_cpu_load_5";
-            this.pgb_cpu_load_5.Size = new System.Drawing.Size(130, 130);
-            this.pgb_cpu_load_5.TabIndex = 4;
-            this.pgb_cpu_load_5.Text = "gaugeProgressBar5";
-            this.pgb_cpu_load_5.Value = 50;
-            // 
-            // pgb_cpu_load_6
-            // 
-            this.pgb_cpu_load_6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_cpu_load_6.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_cpu_load_6.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_cpu_load_6.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_cpu_load_6.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_cpu_load_6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_cpu_load_6.ForeColor = System.Drawing.Color.White;
-            this.pgb_cpu_load_6.HighThreshold = 80;
-            this.pgb_cpu_load_6.LimitThreshold = 90;
-            this.pgb_cpu_load_6.Location = new System.Drawing.Point(654, 41);
-            this.pgb_cpu_load_6.Name = "pgb_cpu_load_6";
-            this.pgb_cpu_load_6.Size = new System.Drawing.Size(130, 130);
-            this.pgb_cpu_load_6.TabIndex = 5;
-            this.pgb_cpu_load_6.Text = "gaugeProgressBar6";
-            this.pgb_cpu_load_6.Value = 50;
-            // 
-            // pgb_memory_load
-            // 
-            this.pgb_memory_load.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_memory_load.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_memory_load.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_memory_load.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_memory_load.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_memory_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_memory_load.ForeColor = System.Drawing.Color.White;
-            this.pgb_memory_load.HighThreshold = 80;
-            this.pgb_memory_load.LimitThreshold = 90;
-            this.pgb_memory_load.Location = new System.Drawing.Point(4, 211);
-            this.pgb_memory_load.Name = "pgb_memory_load";
-            this.pgb_memory_load.Size = new System.Drawing.Size(130, 130);
-            this.pgb_memory_load.TabIndex = 13;
-            this.pgb_memory_load.Text = "gaugeProgressBar7";
-            this.pgb_memory_load.Value = 50;
-            // 
-            // pgb_gpu_load
-            // 
-            this.pgb_gpu_load.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(65)))));
-            this.pgb_gpu_load.ColorHigh = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(195)))), ((int)(((byte)(74)))));
-            this.pgb_gpu_load.ColorLimit = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.pgb_gpu_load.ColorNormal = System.Drawing.Color.FromArgb(((int)(((byte)(86)))), ((int)(((byte)(255)))), ((int)(((byte)(79)))));
-            this.pgb_gpu_load.ColorShade = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
-            this.pgb_gpu_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.pgb_gpu_load.ForeColor = System.Drawing.Color.White;
-            this.pgb_gpu_load.HighThreshold = 80;
-            this.pgb_gpu_load.LimitThreshold = 90;
-            this.pgb_gpu_load.Location = new System.Drawing.Point(159, 211);
-            this.pgb_gpu_load.Name = "pgb_gpu_load";
-            this.pgb_gpu_load.Size = new System.Drawing.Size(130, 130);
-            this.pgb_gpu_load.TabIndex = 16;
-            this.pgb_gpu_load.Text = "gaugeProgressBar8";
-            this.pgb_gpu_load.Value = 50;
             // 
             // MainForm
             // 
@@ -650,6 +650,7 @@
             this.Name = "MainForm";
             this.ShowInTaskbar = false;
             this.Text = "Media Display";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.contextMenuStrip.ResumeLayout(false);
             this.pan_preview.ResumeLayout(false);
