@@ -1,0 +1,3 @@
+[submodule "MediaDisplayServer"]
+	path = MediaDisplayServer
+	url = https://github.com/V-Modder/MediaDisplay-Server
