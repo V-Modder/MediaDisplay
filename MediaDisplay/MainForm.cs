@@ -42,10 +42,10 @@ namespace MediaDisplay {
         private List<Panel> panels;
         private NetworkMonitor networkMonitor;
 
-        public MainForm() {
+        public MainForm(ExternalDisplay externalDisplay) {
             WindowState = FormWindowState.Minimized;
-            externalDisplay = new ExternalDisplay("127.0.0.1", 8765);
-            externalDisplay.OnEventReceived += ExternalDisplay_EventReceived;
+            this.externalDisplay = externalDisplay;
+            this.externalDisplay.OnEventReceived += ExternalDisplay_EventReceived;
             InitializeComponent();
             panels = new List<Panel>() {
                 pan_1,
@@ -124,7 +124,7 @@ namespace MediaDisplay {
         private void drawTimer_Tick(object sender, EventArgs e) {
             using (Bitmap bmp = new Bitmap(pan_preview.Width, pan_preview.Height)) {
                 pan_preview.DrawToBitmap(bmp, new Rectangle(0, 0, pan_preview.Width, pan_preview.Height));
-                externalDisplay.sync(bmp);
+                externalDisplay.sendImage(bmp);
             }
         }
 
