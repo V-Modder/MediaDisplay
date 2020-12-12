@@ -201,19 +201,6 @@ namespace MediaDisplay {
             drawTimer.Interval = 1000 / trb_frames.Value;
         }
 
-        private void lbl_panel_1_Click(object sender, EventArgs e) {
-            switch_panel(pan_1);
-        }
-
-        private void lbl_panel_2_Click(object sender, EventArgs e) {
-            switch_panel(pan_2);
-        }
-
-        private void switch_panel(Panel panelToShow) {
-            panels.ForEach(p => p.Visible = false);
-            panelToShow.Visible = true;
-        }
-
         private void lbl_play_Click(object sender, EventArgs e) {
             SendKeyPress(KeyCode.MEDIA_PLAY_PAUSE);
         }
@@ -236,6 +223,34 @@ namespace MediaDisplay {
 
         private void lbl_volume_down_Click(object sender, EventArgs e) {
             SendKeyPress(KeyCode.VOLUME_DOWN);
+        }
+
+        private void lbl_panel_previous_Click(object sender, EventArgs e) {
+            Panel prevPanel = null;
+            for (int i = 0; i < panels.Count; i++) {
+                if (panels[i].Visible && i > 0) {
+                    prevPanel = panels[i - 1];
+                }
+            }
+
+            if(prevPanel != null) {
+                panels.ForEach(p => p.Visible = false);
+                prevPanel.Visible = true;
+            }
+        }
+
+        private void lbl_panel_next_Click(object sender, EventArgs e) {
+            Panel prevPanel = null;
+            for (int i = 0; i < panels.Count; i++) {
+                if (panels[i].Visible && i < panels.Count - 2) {
+                    prevPanel = panels[i + 1];
+                }
+            }
+
+            if (prevPanel != null) {
+                panels.ForEach(p => p.Visible = false);
+                prevPanel.Visible = true;
+            }
         }
     }
 }

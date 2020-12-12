@@ -7,8 +7,10 @@ namespace MediaDisplay {
 
         private WebsocketClient websocket;
 
-        public ExternalDisplayWebSocket(IpAddress ipAddress) {
-            websocket = new WebsocketClient(new Uri($"ws://{ipAddress}"));
+        public ExternalDisplayWebSocket() {
+            ServerDiscoverer discoverer = new ServerDiscoverer();
+            IpAddress address = discoverer.discover();
+            websocket = new WebsocketClient(new Uri($"ws://{address}"));
             websocket.IsReconnectionEnabled = true;
             websocket.ReconnectionHappened.Subscribe(info =>
                Console.WriteLine($"Reconnection happened, type: {info.Type}"));

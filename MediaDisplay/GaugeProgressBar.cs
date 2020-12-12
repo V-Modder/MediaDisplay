@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace MediaDisplay {
     public partial class GaugeProgressBar : Control {
+        public enum StyleType { Bar, Gauge };
         private int value;
         private Color colorNormal;
         private Color colorHigh;
@@ -14,6 +15,7 @@ namespace MediaDisplay {
         private Color colorShade;
         private int highThreshold;
         private int limitThreshold;
+        private StyleType style;
 
         public GaugeProgressBar() : base() {
             Value = 50;
@@ -26,6 +28,8 @@ namespace MediaDisplay {
             Font = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
             HighThreshold = 80;
             LimitThreshold = 90;
+            style = StyleType.Gauge;
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
         }
 
         protected override Size DefaultSize {
@@ -37,10 +41,19 @@ namespace MediaDisplay {
             g.SmoothingMode =  SmoothingMode.AntiAlias;
             g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             g.FillRectangle(new SolidBrush(BackColor), 0, 0, Width, Height);
-            DrawOuterRing(g);
-            DrawBackgroundRing(g);
-            DrawValueRing(g, DetermineColor());
-            DrawText(g);
+
+            if(style == StyleType.Gauge) {
+                DrawOuterRing(g);
+                DrawBackgroundRing(g);
+                DrawValueRing(g, DetermineColor());
+                DrawRingText(g);
+            }
+            else if(style == StyleType.Bar) {
+                DrawOuterBar(g);
+                DrawBackgroundBar(g);
+                DrawValueBar(g, DetermineColor());
+                DrawBarText(g);
+            }
         }
 
         private void DrawOuterRing(Graphics g) {
@@ -60,7 +73,6 @@ namespace MediaDisplay {
         }
 
         private void DrawBackgroundRing(Graphics g) {
-            var obj = this;
             g.DrawArc(new Pen(ColorShade, 35), 27, 27, Width - 54, Height - 54, 160, 220);
         }
 
@@ -73,11 +85,32 @@ namespace MediaDisplay {
             g.DrawArc(new Pen(color, 35), 27, 27, Width - 54, Height - 54, 160, degree);
         }
 
-        private void DrawText(Graphics g) {
+        private void DrawRingText(Graphics g) {
             string str = string.Format("{0}%", Value);
             Brush b = new SolidBrush(ForeColor);
             SizeF size = g.MeasureString(str, Font);
             g.DrawString(str, Font, b, (Width - size.Width) / 2, ((Height - size.Height) / 2) + (int)(Height * 0.10));
+        }
+
+        private void DrawOuterBar(Graphics g) {
+            float normalPercent = Convert.ToSingle(HighThreshold) / 100f;
+            float highPercent = (Convert.ToSingle(LimitThreshold) - Convert.ToSingle(HighThreshold)) / 100;
+            float limitPercent = (100f - Convert.ToSingle(LimitThreshold)) / 100f;
+
+            g.FillRectangle(new SolidBrush(ColorNormal), 0, 0, Convert.ToSingle(Width) * normalPercent, Convert.ToSingle(Height) * 0.1f);
+            g.FillRectangle(new SolidBrush(ColorHigh), (Convert.ToSingle(Width) * normalPercent) + 1, 0, Convert.ToSingle(Width) * highPercent, Convert.ToSingle(Height) * 0.1f);
+            g.FillRectangle(new SolidBrush(ColorLimit), (Convert.ToSingle(Width) * (normalPercent + highPercent)) + 1, 0, Convert.ToSingle(Width) * limitPercent, Convert.ToSingle(Height) * 0.1f);
+        }
+
+        private void DrawBackgroundBar(Graphics g) {
+            g.FillRectangle(new SolidBrush(ColorShade), 0, Convert.ToSingle(Height) * 0.22F, Convert.ToSingle(Width), Convert.ToSingle(Height) * 0.78f);
+        }
+
+        private void DrawValueBar(Graphics g, Color color) {
+            g.FillRectangle(new SolidBrush(color), 0, Convert.ToSingle(Height) * 0.22F, Convert.ToSingle(Width) * Convert.ToSingle(value) / 100f , Convert.ToSingle(Height) * 0.78f);
+        }
+
+        private void DrawBarText(Graphics g) {
         }
 
         private Color DetermineColor() {
@@ -144,6 +177,17 @@ namespace MediaDisplay {
             }
             set {
                 colorShade = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Appearance")]
+        public StyleType Style {
+            get {
+                return style;
+            }
+            set {
+                style = value;
                 Invalidate();
             }
         }

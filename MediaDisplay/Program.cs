@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using CommandLine.Text;
 using System;
 using System.Windows.Forms;
 
@@ -8,19 +7,18 @@ namespace MediaDisplay {
 
         [STAThread]
         static void Main(string[] args) {
-            string addressStr = null;
+            bool useDummy = false;
             Parser.Default.ParseArguments<Options>(args)
                    .WithParsed<Options>(o => {
-                       addressStr = o.Address;
+                       useDummy = o.Dummy;
                    });
 
             ExternalDisplay externalDisplay;
-            IpAddress address = IpAddress.TryParse(addressStr);
-            if (address != null) {
-                externalDisplay = new ExternalDisplayWebSocket(address);
+            if (useDummy) {
+                externalDisplay = new ExternalDisplayDummy();
             }
             else {
-                externalDisplay = new ExternalDisplayDummy();
+                externalDisplay = new ExternalDisplayWebSocket();
             }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -29,8 +27,7 @@ namespace MediaDisplay {
     }
 
     public class Options {
-        [Option('a', "address", Required = false, HelpText = "Set external display id.")]
-        public string Address { get; set; }
+        [Option('d', "dummy", Required = false, HelpText = "Use dummy display")]
+        public bool Dummy { get; set; }
     }
-
 }
