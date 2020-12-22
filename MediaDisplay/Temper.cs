@@ -39,19 +39,19 @@ namespace MediaDisplay {
         }
 
         public double getTemp() {
-            double value1 = EntryAPI.EMyReadTemp(true);
-            double value2 = EntryAPI.EMyReadTemp(true);
-            if (value1 == -100 || value2 == -100) {
+            double value = EntryAPI.EMyReadTemp(true);
+            //double value2 = EntryAPI.EMyReadTemp(true);
+            if (value == -100) {
                 throw new IOException("No sensor");
             }
-            else if (value1 == 888 || value2 == 888) {
+            else if (value == 888) {
                 throw new IOException("Device error");
             }
-            else if (value1 == 999 || value2 == 999) {
+            else if (value == 999) {
                 throw new IOException("Device error");
             }
             else {
-                return Math.Round((value1 + value2) / 2, 2);
+                return Math.Round(value, 2);
             }
         }
     }

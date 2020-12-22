@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediaDisplay {
     class ExternalDisplayDummy : ExternalDisplay {
@@ -10,8 +6,12 @@ namespace MediaDisplay {
             Console.WriteLine("ExternalDisplayDummy Dispose() called");
         }
 
-        protected override void callService(byte[] data) {
-            Console.WriteLine($"ExternalDisplayDummy callService(), with {data.Length}bytes called");
+        protected override void callService(string data) {
+            Console.WriteLine($"ExternalDisplayDummy callService(), with {data} called");
+        }
+
+        protected override bool isConnected() {
+            return true;
         }
     }
 }

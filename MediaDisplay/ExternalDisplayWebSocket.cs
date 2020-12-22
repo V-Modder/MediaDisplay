@@ -19,7 +19,7 @@ namespace MediaDisplay {
             websocket.StartOrFail().Wait();
         }
 
-        protected override void callService(byte[] data) {
+        protected override void callService(string data) {
             websocket.Send(data);
         }
 
@@ -28,6 +28,10 @@ namespace MediaDisplay {
             websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop").Wait();
             websocket.Dispose();
             Console.WriteLine("websocker closed");
+        }
+
+        protected override bool isConnected() {
+            return websocket.IsRunning;
         }
     }
 }

@@ -63,6 +63,26 @@ namespace MediaDisplay.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap multiple_rectangle_window_interface_hud_vector_removed {
+            get {
+                object obj = ResourceManager.GetObject("multiple-rectangle-window-interface-hud-vector_removed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap multiple_rectangle_window_interface_hud_vector_removed_all {
+            get {
+                object obj = ResourceManager.GetObject("multiple-rectangle-window-interface-hud-vector_removed_all", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap next {
             get {
                 object obj = ResourceManager.GetObject("next", resourceCulture);

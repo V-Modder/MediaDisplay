@@ -13,7 +13,8 @@ namespace MediaDisplay {
 
 
         public abstract void Dispose();
-        protected abstract void callService(byte[] data);
+        protected abstract void callService(string data);
+        protected abstract bool isConnected();
 
         private static ImageCodecInfo GetEncoder(ImageFormat format) {
             var codecs = ImageCodecInfo.GetImageDecoders();
@@ -47,18 +48,16 @@ namespace MediaDisplay {
             return memStream.ToArray();
         }
 
-        public void sendImage(Bitmap image) {
-            Bitmap imageClone = new Bitmap(image);
+        public void sendMetric(Metric data) {
             new Thread(() => {
-                byte[] data = ConvertToBytes(imageClone);
-
                 try {
-                    callService(data);
+                    callService(data.ToJson());
                 }
                 finally {
-                    imageClone.Dispose();
                 }
             }).Start();
         }
+
+        public bool IsConnected { get { return isConnected(); } }
     }
 }

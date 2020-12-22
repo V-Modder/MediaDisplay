@@ -36,20 +36,31 @@ namespace MediaDisplay {
             get { return new Size(150, 150); }
         }
 
-        protected override void OnPaint(PaintEventArgs pe) {
+        protected override void OnPaintBackground(PaintEventArgs pe) {
             Graphics g = pe.Graphics;
-            g.SmoothingMode =  SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             g.FillRectangle(new SolidBrush(BackColor), 0, 0, Width, Height);
 
-            if(style == StyleType.Gauge) {
+            if (style == StyleType.Gauge) {
                 DrawOuterRing(g);
+            }
+            else if (style == StyleType.Bar) {
+                DrawOuterBar(g);
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs pe) {
+            Graphics g = pe.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+
+            if (style == StyleType.Gauge) {
                 DrawBackgroundRing(g);
                 DrawValueRing(g, DetermineColor());
                 DrawRingText(g);
             }
             else if(style == StyleType.Bar) {
-                DrawOuterBar(g);
                 DrawBackgroundBar(g);
                 DrawValueBar(g, DetermineColor());
                 DrawBarText(g);
