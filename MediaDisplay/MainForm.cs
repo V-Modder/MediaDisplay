@@ -5,11 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using OpenHardwareMonitor.Hardware;
+using static MediaDisplay.SendInputWrapper;
 
 namespace MediaDisplay {
     public partial class MainForm : Form {
         private ExternalDisplay externalDisplay;
         private Temper temper;
+        private NetworkMonitor networkMonitor;
+        private PlaybackInfoPipeClient playbackInfoPipeClient;
         private List<HardwareSensor> devices = new List<HardwareSensor>() {
             new HardwareSensor("CPU_LOAD_1", "Intel Core i5-10600K", "CPU Core #1", SensorType.Load),
             new HardwareSensor("CPU_LOAD_2", "Intel Core i5-10600K", "CPU Core #2", SensorType.Load),
@@ -32,8 +35,6 @@ namespace MediaDisplay {
             new HardwareSensor("GPU_LOAD", "NVIDIA GeForce RTX 2070", "GPU Core", SensorType.Load),
             new HardwareSensor("GPU_MEM_LOAD", "NVIDIA GeForce RTX 2070", "GPU Memory", SensorType.Load)
         };
-
-        private NetworkMonitor networkMonitor;
 
         public MainForm(ExternalDisplay externalDisplay) {
             this.externalDisplay = externalDisplay;
@@ -64,36 +65,48 @@ namespace MediaDisplay {
 
             networkMonitor = new NetworkMonitor();
             networkMonitor.StartMonitoring();
+            playbackInfoPipeClient = new PlaybackInfoPipeClient();
+            playbackInfoPipeClient.Start();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            refreshTimer.Stop();
             networkMonitor.StopMonitoring();
             externalDisplay.Dispose();
+            playbackInfoPipeClient.Stop();
         }
 
         private void ExternalDisplay_EventReceived(object sender, ExternalEventArgs e) {
-            //if(e.Action == ExternalAction.click) {
-            //    BeginInvoke(new MethodInvoker(delegate {
-            //        Control panel = pan_preview;
-            //        int y = e.Y;
-            //        if (e.Y >=62) {
-            //            panel = panels.First(p => p.Visible);
-            //            y = e.Y - 62;
-            //        }
-
-            //        Control ctrl = panel.GetChildAtPoint(new Point(e.X, y));
-            //        if(ctrl != null) {
-            //            Type t = ctrl.GetType();
-            //            var evt = t.GetMethod("OnClick", BindingFlags.NonPublic | BindingFlags.Instance);
-            //            if(evt != null) {
-            //                MouseEventArgs args = new MouseEventArgs(MouseButtons.Left, 1, e.X, y, 0);
-            //                evt.Invoke(ctrl, new object[] { args });
-            //            }
-            //        }
-            //    }));
-            //}
+            if (e.Action == ExternalAction.Click) {
+                KeyCode? key;
+                switch(e.Command) {
+                    case "key_next":
+                        key = KeyCode.MEDIA_NEXT_TRACK;
+                        break;
+                    case "key_play_pause":
+                        key = KeyCode.MEDIA_PLAY_PAUSE;
+                        break;
+                    case "key_previous":
+                        key = KeyCode.MEDIA_PREV_TRACK;
+                        break;
+                    case "key_stop":
+                        key = KeyCode.MEDIA_STOP;
+                        break;
+                    case "key_volume_down":
+                        key = KeyCode.VOLUME_DOWN;
+                        break;
+                    case "key_volume_up":
+                        key = KeyCode.VOLUME_UP;
+                        break;
+                    default:
+                        key = null;
+                        break;
+                }
+                if(key != null) {
+                    SendKeyPress(key.Value);
+                }
+            }
         }
-
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e) {
             Close();
         }
@@ -159,6 +172,10 @@ namespace MediaDisplay {
             metric.RoomTemperature = temper.getTemp();
             metric.Time = DateTime.Now.ToString("HH:mm");
 
+            if(playbackInfoPipeClient.HasChanges) {
+                metric.PlaybackInfo = playbackInfoPipeClient.GetPlaybackInfo();
+            }
+
             externalDisplay.sendMetric(metric);
         }
 
@@ -179,29 +196,5 @@ namespace MediaDisplay {
             lbl_frames_set.Text = trb_frames.Value.ToString();
             refreshTimer.Interval = 1000 / trb_frames.Value;
         }
-
-        //private void lbl_play_Click(object sender, EventArgs e) {
-        //    SendKeyPress(KeyCode.MEDIA_PLAY_PAUSE);
-        //}
-
-        //private void lbl_stop_Click(object sender, EventArgs e) {
-        //    SendKeyPress(KeyCode.MEDIA_STOP);
-        //}
-
-        //private void lbl_previous_Click(object sender, EventArgs e) {
-        //    SendKeyPress(KeyCode.MEDIA_PREV_TRACK);
-        //}
-
-        //private void lbl_next_Click(object sender, EventArgs e) {
-        //    SendKeyPress(KeyCode.MEDIA_NEXT_TRACK);
-        //}
-
-        //private void lbl_volume_up_Click(object sender, EventArgs e) {
-        //    SendKeyPress(KeyCode.VOLUME_UP);
-        //}
-
-        //private void lbl_volume_down_Click(object sender, EventArgs e) {
-        //    SendKeyPress(KeyCode.VOLUME_DOWN);
-        //}
     }
 }

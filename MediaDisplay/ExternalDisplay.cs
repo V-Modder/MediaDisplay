@@ -32,11 +32,8 @@ namespace MediaDisplay {
         }
 
         protected void messageReceived(string msg) {
-            var action = JsonConvert.DeserializeObject<JsonAction>(msg);
-            if (action.Action != null) {
-                ExternalEventArgs args = new ExternalEventArgs(action);
-                EventReceived(args);
-            }
+            var action = JsonConvert.DeserializeObject<ExternalEventArgs>(msg);
+            EventReceived(action);
         }
 
         protected static byte[] ConvertToBytes(Bitmap image) {

@@ -97,7 +97,6 @@
     <Compile Include="HardwareSensor.cs" />
     <Compile Include="ExternalDisplay.cs" />
     <Compile Include="IpAddress.cs" />
-    <Compile Include="JsonAction.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,6 +107,7 @@
     <Compile Include="NetworkAdapter.cs" />
     <Compile Include="NetworkMonitor.cs" />
     <Compile Include="PerformanceCounterWrapper.cs" />
+    <Compile Include="PlaybackInfoPipeClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendInputWrapper.cs" />
@@ -146,13 +146,20 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icon175x175.png" />
-    <None Include="Resources\multiple-rectangle-window-interface-hud-vector_removed_all.jpg" />
-    <None Include="Resources\multiple-rectangle-window-interface-hud-vector_removed.jpg" />
-    <None Include="icons\stop.png" />
-    <None Include="icons\prev.png" />
-    <None Include="icons\play.png" />
-    <None Include="icons\pause.png" />
-    <None Include="icons\next.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlaybackInfo\PlaybackInfo.csproj">
+      <Project>{394f813e-51ef-4845-8642-b765f8665f55}</Project>
+      <Name>PlaybackInfo</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(SolutionDir)PlaybackInfoService\$(OutDir)netcoreapp3.1\*" "$(ProjectDir)$(OutDir)PlaybackInfoService" /i /d /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>

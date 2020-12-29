@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using PlaybackInfoDao;
 
 namespace MediaDisplay {
     public class Metric {
@@ -28,8 +29,15 @@ namespace MediaDisplay {
         [JsonProperty("room_temperature")]
         public double RoomTemperature { get; set; }
 
+        [JsonProperty("playback_info")]
+        public PlaybackInfo PlaybackInfo { get; set; }
+
         public static Metric FromJson(string json) => JsonConvert.DeserializeObject<Metric>(json);
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() {
+            var settings = new JsonSerializerSettings();
+            settings.NullValueHandling = NullValueHandling.Include;
+            return JsonConvert.SerializeObject(this, settings);
+        }
     }
 
     public class Cpu {

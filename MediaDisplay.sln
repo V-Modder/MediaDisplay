@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaDisplay", "MediaDispla
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "MediaDisplayServer", "MediaDisplayServer\MediaDisplayServer.pyproj", "{AF341064-C2D1-41C7-9C15-79689A35183E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaybackInfo", "PlaybackInfo\PlaybackInfo.csproj", "{394F813E-51EF-4845-8642-B765F8665F55}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlaybackInfoService", "PlaybackInfoService\PlaybackInfoService.csproj", "{E3645EE5-722E-4EEC-A901-FC44334ECC7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,14 @@ Global
 		{A000B7AE-6B17-45EE-A2F4-EE5A6AC27E64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AF341064-C2D1-41C7-9C15-79689A35183E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AF341064-C2D1-41C7-9C15-79689A35183E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{394F813E-51EF-4845-8642-B765F8665F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{394F813E-51EF-4845-8642-B765F8665F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{394F813E-51EF-4845-8642-B765F8665F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{394F813E-51EF-4845-8642-B765F8665F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3645EE5-722E-4EEC-A901-FC44334ECC7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3645EE5-722E-4EEC-A901-FC44334ECC7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3645EE5-722E-4EEC-A901-FC44334ECC7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3645EE5-722E-4EEC-A901-FC44334ECC7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

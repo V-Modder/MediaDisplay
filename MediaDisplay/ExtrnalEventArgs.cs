@@ -1,18 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace MediaDisplay {
     public class ExternalEventArgs : EventArgs {
-        public enum ExternalAction { click=1 }
-        public ExternalEventArgs() { }
-
-        public ExternalEventArgs(JsonAction action) {
-            this.Action = (ExternalAction) Enum.Parse(typeof(ExternalAction), action.Action);
-            this.X = action.X;
-            this.Y = action.Y;
+        public static ExternalEventArgs FromJson(string json) => JsonConvert.DeserializeObject<ExternalEventArgs>(json);
+        public string ToJson() {
+            var settings = new JsonSerializerSettings();
+            settings.NullValueHandling = NullValueHandling.Include;
+            return JsonConvert.SerializeObject(this, settings);
         }
 
+        [JsonProperty("action")]
         public ExternalAction Action { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+
+        [JsonProperty("command")]
+        public string Command { get; set; }
     }
+
+    public enum ExternalAction { Click=1 }
 }

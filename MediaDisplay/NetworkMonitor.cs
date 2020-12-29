@@ -30,8 +30,11 @@ namespace MediaDisplay {
         }
 
         private void timer_Elapsed(object sender, ElapsedEventArgs e) {
-            foreach (NetworkAdapter adapter in monitoredAdapters)
-                adapter.refresh();
+            try { 
+                foreach (NetworkAdapter adapter in monitoredAdapters)
+                    adapter.refresh();
+            } 
+            catch(Exception) { }
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
@@ -64,8 +67,8 @@ namespace MediaDisplay {
         }
 
         public void StopMonitoring() {
+            timer.Stop();
             monitoredAdapters.Clear();
-            timer.Enabled = false;
         }
 
         public void StopMonitoring(NetworkAdapter adapter) {
@@ -76,17 +79,17 @@ namespace MediaDisplay {
         }
 
         public string sumDownloadSpeed() {
-            return SizeSuffix(adapters.Sum(a => a.DownloadSpeed));
+            return SizeSuffix(adapters.Sum(a => a.DownloadSpeed), 0);
         }
 
         public string sumUploadSpeed() {
-            return SizeSuffix(adapters.Sum(a => a.UploadSpeed));
+            return SizeSuffix(adapters.Sum(a => a.UploadSpeed), 0);
         }
 
         private static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
         private static string SizeSuffix(long value, int decimalPlaces = 1) {
             if (value < 0) { return "-" + SizeSuffix(-value); }
-            if (value == 0) { return "0,0 B"; }
+            if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} B", 0); }
 
             // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
             int mag = (int)Math.Log(value, 1024);

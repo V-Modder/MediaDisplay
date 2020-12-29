@@ -14,7 +14,7 @@ namespace MediaDisplay {
             websocket.IsReconnectionEnabled = true;
             websocket.ReconnectionHappened.Subscribe(info =>
                Console.WriteLine($"Reconnection happened, type: {info.Type}"));
-
+            websocket.ReconnectTimeout = null;
             websocket.MessageReceived.Subscribe(msg => messageReceived(msg.Text));
             websocket.StartOrFail().Wait();
         }
@@ -25,7 +25,8 @@ namespace MediaDisplay {
 
         public override void Dispose() {
             Console.WriteLine("websocker close requested");
-            websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop").Wait();
+            websocket.IsReconnectionEnabled = false;
+            websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop");
             websocket.Dispose();
             Console.WriteLine("websocker closed");
         }
