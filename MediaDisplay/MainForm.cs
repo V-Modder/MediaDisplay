@@ -40,8 +40,10 @@ namespace MediaDisplay {
             this.externalDisplay = externalDisplay;
             this.externalDisplay.OnEventReceived += ExternalDisplay_EventReceived;
 
-            Hide();
             InitializeComponent();
+            WindowState = FormWindowState.Minimized;
+            ShowInTaskbar = false;
+            externalDisplay.Connect();
             temper = new Temper(Handle);
             InitDevices();
         }
@@ -142,9 +144,13 @@ namespace MediaDisplay {
 
                 new Thread(() => RefreshDataToDisplay()).Start();
             }
-            else if (!externalDisplay.IsConnected && lbl_connection_status.Text != "Disconnected"){
+            else if (externalDisplay.Status == DisplayStatus.Disconnected && lbl_connection_status.Text != "Disconnected"){
                 lbl_connection_status.Text = "Disconnected";
                 lbl_connection_status.ForeColor = Color.Red;
+            }
+            else if (externalDisplay.Status == DisplayStatus.Connecting && lbl_connection_status.Text != "Connecting") {
+                lbl_connection_status.Text = "Connecting";
+                lbl_connection_status.ForeColor = Color.Orange;
             }
         }
 
@@ -176,7 +182,7 @@ namespace MediaDisplay {
                 metric.PlaybackInfo = playbackInfoPipeClient.GetPlaybackInfo();
             }
 
-            externalDisplay.sendMetric(metric);
+            externalDisplay.SendMetric(metric);
         }
 
         private void UpdateAllDevices() {

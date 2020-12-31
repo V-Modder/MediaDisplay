@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace MediaDisplay {
     class ExternalDisplayDummy : ExternalDisplay {
@@ -6,12 +7,14 @@ namespace MediaDisplay {
             Console.WriteLine("ExternalDisplayDummy Dispose() called");
         }
 
-        protected override void callService(string data) {
+        protected override void CallService(string data) {
             Console.WriteLine($"ExternalDisplayDummy callService(), with {data} called");
         }
 
-        protected override bool isConnected() {
-            return true;
+        protected override void InitConnection() {
+            SetStatus(DisplayStatus.Connecting);
+            Thread.Sleep(10000);
+            SetStatus(DisplayStatus.Connected);
         }
     }
 }

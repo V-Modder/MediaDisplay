@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.WebSockets;
+using System.Threading;
 using Websocket.Client;
 
 namespace MediaDisplay {
@@ -7,32 +8,33 @@ namespace MediaDisplay {
 
         private WebsocketClient websocket;
 
-        public ExternalDisplayWebSocket() {
-            ServerDiscoverer discoverer = new ServerDiscoverer();
-            IpAddress address = discoverer.discover();
-            websocket = new WebsocketClient(new Uri($"ws://{address}"));
-            websocket.IsReconnectionEnabled = true;
-            websocket.ReconnectionHappened.Subscribe(info =>
-               Console.WriteLine($"Reconnection happened, type: {info.Type}"));
-            websocket.ReconnectTimeout = null;
-            websocket.MessageReceived.Subscribe(msg => messageReceived(msg.Text));
-            websocket.StartOrFail().Wait();
-        }
-
-        protected override void callService(string data) {
+        protected override void CallService(string data) {
             websocket.Send(data);
         }
 
         public override void Dispose() {
-            Console.WriteLine("websocker close requested");
+            Console.WriteLine("websocket close requested");
             websocket.IsReconnectionEnabled = false;
             websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop");
             websocket.Dispose();
-            Console.WriteLine("websocker closed");
+            Console.WriteLine("websocket closed");
         }
 
-        protected override bool isConnected() {
-            return websocket.IsRunning;
+        protected override void InitConnection() {
+            SetStatus(DisplayStatus.Connecting);
+            ServerDiscoverer discoverer = new ServerDiscoverer();
+            IpAddress address = null;
+            do {
+                discoverer.discover();
+            } while (address == null);
+            websocket = new WebsocketClient(new Uri($"ws://{address}"));
+            websocket.IsReconnectionEnabled = true;
+            websocket.ReconnectionHappened.Subscribe(info =>
+                Console.WriteLine($"Reconnection happened, type: {info.Type}"));
+            websocket.ReconnectTimeout = null;
+            websocket.MessageReceived.Subscribe(msg => MessageReceived(msg.Text));
+            websocket.StartOrFail().Wait();
+            SetStatus(DisplayStatus.Connected);
         }
     }
 }

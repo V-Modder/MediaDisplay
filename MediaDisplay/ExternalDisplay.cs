@@ -11,50 +11,48 @@ namespace MediaDisplay {
         public event EventHandler<ExternalEventArgs> OnEventReceived;
         public delegate void EventReceivedEventHandler<ExternalEventArgs>(object sender, ExternalEventArgs e);
 
+        private DisplayStatus status;
 
         public abstract void Dispose();
-        protected abstract void callService(string data);
-        protected abstract bool isConnected();
-
-        private static ImageCodecInfo GetEncoder(ImageFormat format) {
-            var codecs = ImageCodecInfo.GetImageDecoders();
-            foreach (var codec in codecs) {
-                if (codec.FormatID == format.Guid) {
-                    return codec;
-                }
-            }
-            return null;
-        }
+        protected abstract void CallService(string data);
+        protected abstract void InitConnection();
 
         protected virtual void EventReceived(ExternalEventArgs e) {
             EventHandler<ExternalEventArgs> handler = OnEventReceived;
             handler?.Invoke(this, e);
         }
 
-        protected void messageReceived(string msg) {
+        protected void MessageReceived(string msg) {
             var action = JsonConvert.DeserializeObject<ExternalEventArgs>(msg);
             EventReceived(action);
         }
 
-        protected static byte[] ConvertToBytes(Bitmap image) {
-            var encoderParameters = new EncoderParameters(1);
-            encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
-            MemoryStream memStream = new MemoryStream();
-            image.Save(memStream, GetEncoder(ImageFormat.Jpeg), encoderParameters);
-
-            return memStream.ToArray();
+        protected void SetStatus(DisplayStatus status) {
+            this.status = status;
         }
 
-        public void sendMetric(Metric data) {
+        public void SendMetric(Metric data) {
             new Thread(() => {
                 try {
-                    callService(data.ToJson());
+                    CallService(data.ToJson());
                 }
                 finally {
                 }
             }).Start();
         }
 
-        public bool IsConnected { get { return isConnected(); } }
+        public bool IsConnected { get { return status == DisplayStatus.Connected; } }
+
+        public DisplayStatus Status { get { return status; } }
+
+        public void Connect() {
+            new Thread(() => {
+                InitConnection();
+            }).Start();
+        }
+    }
+
+    public enum DisplayStatus {
+        Disconnected, Connecting, Connected
     }
 }

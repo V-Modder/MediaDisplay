@@ -21,10 +21,10 @@ namespace MediaDisplay {
             string dir = getSubDirectory();
             playbackServerProcess = new Process();
             playbackServerProcess.StartInfo.FileName = dir + "\\PlaybackInfoService.exe";
-            //playbackServerProcess.StartInfo.CreateNoWindow = true;
-            //playbackServerProcess.StartInfo.ErrorDialog = false;
+            playbackServerProcess.StartInfo.CreateNoWindow = true;
+            playbackServerProcess.StartInfo.ErrorDialog = false;
             playbackServerProcess.StartInfo.WorkingDirectory = dir;
-            //playbackServerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            playbackServerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             //playbackServerProcess.StartInfo.UseShellExecute = false;
         }
 
