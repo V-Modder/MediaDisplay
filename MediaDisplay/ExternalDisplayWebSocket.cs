@@ -25,7 +25,7 @@ namespace MediaDisplay {
             ServerDiscoverer discoverer = new ServerDiscoverer();
             IpAddress address = null;
             do {
-                discoverer.discover();
+                address = discoverer.discover();
             } while (address == null);
             websocket = new WebsocketClient(new Uri($"ws://{address}"));
             websocket.IsReconnectionEnabled = true;
