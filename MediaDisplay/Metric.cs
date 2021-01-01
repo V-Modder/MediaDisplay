@@ -32,6 +32,12 @@ namespace MediaDisplay {
         [JsonProperty("playback_info")]
         public PlaybackInfo PlaybackInfo { get; set; }
 
+        [JsonProperty("display_brightness")]
+        public int? DisplayBrightness { get; set; }
+
+        [JsonProperty("send_display_brightness")]
+        public bool? SendDisplayBrightness { get; set; }
+
         public static Metric FromJson(string json) => JsonConvert.DeserializeObject<Metric>(json);
         public string ToJson() {
             var settings = new JsonSerializerSettings();

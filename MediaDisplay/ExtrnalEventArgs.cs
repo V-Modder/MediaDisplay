@@ -17,5 +17,5 @@ namespace MediaDisplay {
         public string Command { get; set; }
     }
 
-    public enum ExternalAction { Click=1 }
+    public enum ExternalAction { Click=1, Brightness=2 }
 }

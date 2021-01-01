@@ -14,6 +14,9 @@ namespace MediaDisplay {
         private Temper temper;
         private NetworkMonitor networkMonitor;
         private PlaybackInfoPipeClient playbackInfoPipeClient;
+        private bool brightnessChanged;
+        private int displayBrightness;
+        private bool getBrightness;
         private List<HardwareSensor> devices = new List<HardwareSensor>() {
             new HardwareSensor("CPU_LOAD_1", "Intel Core i5-10600K", "CPU Core #1", SensorType.Load),
             new HardwareSensor("CPU_LOAD_2", "Intel Core i5-10600K", "CPU Core #2", SensorType.Load),
@@ -47,6 +50,8 @@ namespace MediaDisplay {
             externalDisplay.Connect();
             temper = new Temper(Handle);
             InitDevices();
+            brightnessChanged = false;
+            getBrightness = false;
         }
 
         private void InitDevices() {
@@ -109,7 +114,17 @@ namespace MediaDisplay {
                     SendKeyPress(key.Value);
                 }
             }
+            else if(e.Action == ExternalAction.Brightness) {
+                Invoke(new MethodInvoker(
+                    () => {
+                        trb_display_brightness.Value = Convert.ToInt32(e.Command) / 10;
+                        trb_display_brightness.Enabled = true;
+                        lbl_display_brightness_set.Text = e.Command;
+                    }
+                ));
+            }
         }
+
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e) {
             Close();
         }
@@ -141,6 +156,7 @@ namespace MediaDisplay {
                 if (lbl_connection_status.Text != "Connected") {
                     lbl_connection_status.Text = "Connected";
                     lbl_connection_status.ForeColor = Color.Green;
+                    getBrightness = true;
                 }
 
                 new Thread(() => RefreshDataToDisplay()).Start();
@@ -148,10 +164,12 @@ namespace MediaDisplay {
             else if (externalDisplay.Status == DisplayStatus.Disconnected && lbl_connection_status.Text != "Disconnected"){
                 lbl_connection_status.Text = "Disconnected";
                 lbl_connection_status.ForeColor = Color.Red;
+                trb_display_brightness.Enabled = false;
             }
             else if (externalDisplay.Status == DisplayStatus.Connecting && lbl_connection_status.Text != "Connecting") {
                 lbl_connection_status.Text = "Connecting";
                 lbl_connection_status.ForeColor = Color.Orange;
+                trb_display_brightness.Enabled = false;
             }
         }
 
@@ -183,6 +201,15 @@ namespace MediaDisplay {
                 metric.PlaybackInfo = playbackInfoPipeClient.GetPlaybackInfo();
             }
 
+            if(brightnessChanged) {
+                metric.DisplayBrightness = displayBrightness;
+            }
+
+            if(getBrightness) {
+                getBrightness = false;
+                metric.SendDisplayBrightness = true;
+            }
+
             externalDisplay.SendMetric(metric);
         }
 
@@ -202,6 +229,12 @@ namespace MediaDisplay {
         private void TrackBar1_Scroll(object sender, EventArgs e) {
             lbl_frames_set.Text = trb_frames.Value.ToString();
             refreshTimer.Interval = 1000 / trb_frames.Value;
+        }
+
+        private void trb_display_brightness_Scroll(object sender, EventArgs e) {
+            displayBrightness = trb_display_brightness.Value * 10;
+            lbl_display_brightness_set.Text = displayBrightness.ToString();
+            brightnessChanged = true;
         }
 
         public const int WM_NCLBUTTONDOWN = 0xA1;

@@ -38,9 +38,13 @@
             this.btn_minimize = new MediaDisplay.WindowButton();
             this.btn_close = new MediaDisplay.WindowButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.trb_display_brightness = new System.Windows.Forms.TrackBar();
+            this.lbl_display_brightness_set = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trb_frames)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trb_display_brightness)).BeginInit();
             this.SuspendLayout();
             // 
             // notifyIcon
@@ -56,25 +60,25 @@
             this.showToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip.Size = new System.Drawing.Size(104, 48);
             // 
             // showToolStripMenuItem
             // 
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.showToolStripMenuItem.Text = "Show";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.ShowToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // trb_frames
             // 
-            this.trb_frames.Location = new System.Drawing.Point(16, 80);
+            this.trb_frames.Location = new System.Drawing.Point(12, 80);
             this.trb_frames.Minimum = 1;
             this.trb_frames.Name = "trb_frames";
             this.trb_frames.Size = new System.Drawing.Size(169, 45);
@@ -174,12 +178,46 @@
             this.pictureBox1.TabIndex = 10;
             this.pictureBox1.TabStop = false;
             // 
+            // trb_display_brightness
+            // 
+            this.trb_display_brightness.Location = new System.Drawing.Point(16, 172);
+            this.trb_display_brightness.Name = "trb_display_brightness";
+            this.trb_display_brightness.Size = new System.Drawing.Size(169, 45);
+            this.trb_display_brightness.TabIndex = 11;
+            this.trb_display_brightness.Value = 10;
+            this.trb_display_brightness.Scroll += new System.EventHandler(this.trb_display_brightness_Scroll);
+            // 
+            // lbl_display_brightness_set
+            // 
+            this.lbl_display_brightness_set.AutoSize = true;
+            this.lbl_display_brightness_set.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_display_brightness_set.ForeColor = System.Drawing.Color.White;
+            this.lbl_display_brightness_set.Location = new System.Drawing.Point(195, 172);
+            this.lbl_display_brightness_set.Name = "lbl_display_brightness_set";
+            this.lbl_display_brightness_set.Size = new System.Drawing.Size(40, 24);
+            this.lbl_display_brightness_set.TabIndex = 12;
+            this.lbl_display_brightness_set.Text = "100";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(12, 145);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(98, 24);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Brightness";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(550, 130);
+            this.ClientSize = new System.Drawing.Size(550, 232);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.lbl_display_brightness_set);
+            this.Controls.Add(this.trb_display_brightness);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btn_close);
             this.Controls.Add(this.btn_minimize);
@@ -199,6 +237,7 @@
             this.contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trb_frames)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trb_display_brightness)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -219,6 +258,9 @@
         private WindowButton btn_minimize;
         private WindowButton btn_close;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TrackBar trb_display_brightness;
+        private System.Windows.Forms.Label lbl_display_brightness_set;
+        private System.Windows.Forms.Label label3;
     }
 }
 
