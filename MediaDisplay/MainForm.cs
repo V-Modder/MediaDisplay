@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using OpenHardwareMonitor.Hardware;
@@ -201,6 +202,29 @@ namespace MediaDisplay {
         private void TrackBar1_Scroll(object sender, EventArgs e) {
             lbl_frames_set.Text = trb_frames.Value.ToString();
             refreshTimer.Interval = 1000 / trb_frames.Value;
+        }
+
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HTCAPTION = 0x2;
+        [DllImport("User32.dll")]
+        public static extern bool ReleaseCapture();
+        [DllImport("User32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
+        private void MainForm_MouseDown(object sender, MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+            }
+        }
+
+        private void btn_minimize_Click(object sender, EventArgs e) {
+            WindowState = FormWindowState.Minimized;
+            showToolStripMenuItem.Text = "Show";
+        }
+
+        private void btn_close_Click(object sender, EventArgs e) {
+            Close();
         }
     }
 }

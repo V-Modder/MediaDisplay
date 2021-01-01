@@ -116,6 +116,9 @@
     <Compile Include="SendInputWrapper.cs" />
     <Compile Include="ServerDiscoverer.cs" />
     <Compile Include="Temper.cs" />
+    <Compile Include="WindowButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
