@@ -45,6 +45,7 @@ namespace MediaDisplay {
             this.externalDisplay.OnEventReceived += ExternalDisplay_EventReceived;
 
             InitializeComponent();
+            pictureBox1.Image = Icon.ToBitmap();
             WindowState = FormWindowState.Minimized;
             ShowInTaskbar = false;
             externalDisplay.Connect();
@@ -201,7 +202,7 @@ namespace MediaDisplay {
                 metric.PlaybackInfo = playbackInfoPipeClient.GetPlaybackInfo();
             }
 
-            if(brightnessChanged) {
+            if(trb_display_brightness.Enabled && brightnessChanged) {
                 metric.DisplayBrightness = displayBrightness;
             }
 

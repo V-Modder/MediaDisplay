@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MediaDisplay {
@@ -18,6 +14,7 @@ namespace MediaDisplay {
             BackColor = Color.Black;
             drawingBackColor = BackColor;
             ForeColor = Color.Gray;
+            drawingForeColor = ForeColor;
             WindowButtonType = WindowButtonType.Minimize;
             Size = new Size(32, 32);
         }
@@ -25,7 +22,6 @@ namespace MediaDisplay {
         public Color HighlightBackColor { get; set; }
         public Color HighlightForeColor { get; set; }
         public WindowButtonType WindowButtonType { get; set; }
-
 
         protected override void OnPaint(PaintEventArgs pe) {
             pe.Graphics.FillRectangle(new SolidBrush(drawingBackColor), 0, 0, Width, Height);
