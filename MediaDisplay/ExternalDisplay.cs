@@ -53,6 +53,6 @@ namespace MediaDisplay {
     }
 
     public enum DisplayStatus {
-        Disconnected, Connecting, Connected
+        Disconnected, Connecting, Connected, Closing
     }
 }

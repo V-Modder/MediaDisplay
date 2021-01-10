@@ -13,11 +13,14 @@ namespace MediaDisplay {
         }
 
         public override void Dispose() {
-            Console.WriteLine("websocket close requested");
-            websocket.IsReconnectionEnabled = false;
-            websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop");
-            websocket.Dispose();
-            Console.WriteLine("websocket closed");
+            SetStatus(DisplayStatus.Closing);
+            if(websocket != null) {
+                Console.WriteLine("websocket close requested");
+                websocket.IsReconnectionEnabled = false;
+                websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop");
+                websocket.Dispose();
+                Console.WriteLine("websocket closed");
+            }
         }
 
         protected override void InitConnection() {
@@ -26,15 +29,17 @@ namespace MediaDisplay {
             IpAddress address = null;
             do {
                 address = discoverer.discover();
-            } while (address == null);
-            websocket = new WebsocketClient(new Uri($"ws://{address}"));
-            websocket.IsReconnectionEnabled = true;
-            websocket.ReconnectionHappened.Subscribe(info =>
-                Console.WriteLine($"Reconnection happened, type: {info.Type}"));
-            websocket.ReconnectTimeout = null;
-            websocket.MessageReceived.Subscribe(msg => MessageReceived(msg.Text));
-            websocket.StartOrFail().Wait();
-            SetStatus(DisplayStatus.Connected);
+            } while (address == null && Status != DisplayStatus.Closing);
+            if(Status != DisplayStatus.Closing) {
+                websocket = new WebsocketClient(new Uri($"ws://{address}"));
+                websocket.IsReconnectionEnabled = true;
+                websocket.ReconnectionHappened.Subscribe(info =>
+                    Console.WriteLine($"Reconnection happened, type: {info.Type}"));
+                websocket.ReconnectTimeout = null;
+                websocket.MessageReceived.Subscribe(msg => MessageReceived(msg.Text));
+                websocket.StartOrFail().Wait();
+                SetStatus(DisplayStatus.Connected);
+            }
         }
     }
 }
