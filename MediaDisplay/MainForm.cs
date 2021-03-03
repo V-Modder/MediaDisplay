@@ -161,6 +161,7 @@ namespace MediaDisplay {
                 }
 
                 new Thread(() => RefreshDataToDisplay()).Start();
+                lbl_bandwidth.Text = string.Format("{0} kb/s", externalDisplay.StreamBandwidthInKb);
             }
             else if (externalDisplay.Status == DisplayStatus.Disconnected && lbl_connection_status.Text != "Disconnected"){
                 lbl_connection_status.Text = "Disconnected";
@@ -195,7 +196,12 @@ namespace MediaDisplay {
             metric.Network.Down = networkMonitor.sumDownloadSpeed();
             metric.Network.Up = networkMonitor.sumUploadSpeed();
 
-            metric.RoomTemperature = temper.getTemp();
+            try {
+                metric.RoomTemperature = temper.GetTemp();
+            }
+            catch(Exception e) {
+                metric.RoomTemperature = 0;
+            }
             metric.Time = DateTime.Now.ToString("HH:mm");
 
             if(playbackInfoPipeClient.HasChanges) {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net.WebSockets;
-using System.Threading;
+using System.Timers;
 using Websocket.Client;
 
 namespace MediaDisplay {
@@ -9,7 +9,7 @@ namespace MediaDisplay {
         private WebsocketClient websocket;
 
         protected override void CallService(string data) {
-            websocket.Send(data);
+            websocket.SendInstant(data);
         }
 
         public override void Dispose() {

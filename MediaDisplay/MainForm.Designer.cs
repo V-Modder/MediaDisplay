@@ -34,13 +34,14 @@
             this.lbl_frames_set = new System.Windows.Forms.Label();
             this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.lbl_connection_status = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lbl_title = new System.Windows.Forms.Label();
             this.btn_minimize = new MediaDisplay.WindowButton();
             this.btn_close = new MediaDisplay.WindowButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.trb_display_brightness = new System.Windows.Forms.TrackBar();
             this.lbl_display_brightness_set = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lbl_brightness = new System.Windows.Forms.Label();
+            this.lbl_bandwidth = new System.Windows.Forms.Label();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trb_frames)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -126,16 +127,16 @@
             this.lbl_connection_status.TabIndex = 6;
             this.lbl_connection_status.Text = "Disconencted";
             // 
-            // label1
+            // lbl_title
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(190, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(162, 25);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Media-Display";
+            this.lbl_title.AutoSize = true;
+            this.lbl_title.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_title.ForeColor = System.Drawing.Color.White;
+            this.lbl_title.Location = new System.Drawing.Point(190, 9);
+            this.lbl_title.Name = "lbl_title";
+            this.lbl_title.Size = new System.Drawing.Size(162, 25);
+            this.lbl_title.TabIndex = 7;
+            this.lbl_title.Text = "Media-Display";
             // 
             // btn_minimize
             // 
@@ -197,16 +198,26 @@
             this.lbl_display_brightness_set.TabIndex = 12;
             this.lbl_display_brightness_set.Text = "100";
             // 
-            // label3
+            // lbl_brightness
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(12, 145);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 24);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "Brightness";
+            this.lbl_brightness.AutoSize = true;
+            this.lbl_brightness.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_brightness.ForeColor = System.Drawing.Color.White;
+            this.lbl_brightness.Location = new System.Drawing.Point(12, 145);
+            this.lbl_brightness.Name = "lbl_brightness";
+            this.lbl_brightness.Size = new System.Drawing.Size(98, 24);
+            this.lbl_brightness.TabIndex = 13;
+            this.lbl_brightness.Text = "Brightness";
+            // 
+            // lbl_bandwidth
+            // 
+            this.lbl_bandwidth.AutoSize = true;
+            this.lbl_bandwidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_bandwidth.ForeColor = System.Drawing.Color.White;
+            this.lbl_bandwidth.Location = new System.Drawing.Point(333, 172);
+            this.lbl_bandwidth.Name = "lbl_bandwidth";
+            this.lbl_bandwidth.Size = new System.Drawing.Size(0, 24);
+            this.lbl_bandwidth.TabIndex = 14;
             // 
             // MainForm
             // 
@@ -214,13 +225,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(550, 232);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.lbl_bandwidth);
+            this.Controls.Add(this.lbl_brightness);
             this.Controls.Add(this.lbl_display_brightness_set);
             this.Controls.Add(this.trb_display_brightness);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btn_close);
             this.Controls.Add(this.btn_minimize);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lbl_title);
             this.Controls.Add(this.lbl_connection_status);
             this.Controls.Add(this.lbl_frames_set);
             this.Controls.Add(this.lbl_frames);
@@ -254,13 +266,14 @@
         private System.Windows.Forms.Label lbl_frames_set;
         private System.Windows.Forms.Timer refreshTimer;
         private System.Windows.Forms.Label lbl_connection_status;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbl_title;
         private WindowButton btn_minimize;
         private WindowButton btn_close;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TrackBar trb_display_brightness;
         private System.Windows.Forms.Label lbl_display_brightness_set;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lbl_brightness;
+        private System.Windows.Forms.Label lbl_bandwidth;
     }
 }
 

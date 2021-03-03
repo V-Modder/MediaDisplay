@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
+using System.Timers;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace MediaDisplay {
@@ -12,6 +13,10 @@ namespace MediaDisplay {
         public delegate void EventReceivedEventHandler<ExternalEventArgs>(object sender, ExternalEventArgs e);
 
         private DisplayStatus status;
+        private long sendedBytes;
+        private long sendedBytesOld;
+        private long sendedBytesPerSecond;
+        private System.Timers.Timer speedCalculatorTimer;
 
         public abstract void Dispose();
         protected abstract void CallService(string data);
@@ -34,7 +39,9 @@ namespace MediaDisplay {
         public void SendMetric(Metric data) {
             new Thread(() => {
                 try {
-                    CallService(data.ToJson());
+                    string json = data.ToJson();
+                    sendedBytes += System.Text.Encoding.UTF8.GetByteCount(json);
+                    CallService(json);
                 }
                 finally {
                 }
@@ -48,7 +55,23 @@ namespace MediaDisplay {
         public void Connect() {
             new Thread(() => {
                 InitConnection();
+                speedCalculatorTimer.Enabled = true;
             }).Start();
+        }
+
+        public ExternalDisplay() {
+            speedCalculatorTimer = new System.Timers.Timer(2000);
+            speedCalculatorTimer.Elapsed += SpeedCalculatorTimer_Elapsed;
+            speedCalculatorTimer.AutoReset = true;
+        }
+
+        private void SpeedCalculatorTimer_Elapsed(object sender, ElapsedEventArgs e) {
+            sendedBytesPerSecond = (sendedBytes - sendedBytesOld) / 2;
+            sendedBytesOld = sendedBytes;
+        }
+
+        public int StreamBandwidthInKb {
+            get { return (int)sendedBytesPerSecond; }
         }
     }
 
