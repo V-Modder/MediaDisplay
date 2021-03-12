@@ -110,6 +110,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MediaDisplayServiceWorker.cs" />
     <Compile Include="Metric.cs" />
     <Compile Include="NetworkAdapter.cs" />
     <Compile Include="NetworkMonitor.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendInputWrapper.cs" />
     <Compile Include="ServerDiscoverer.cs" />
+    <Compile Include="StateChangedArgs.cs" />
     <Compile Include="Temper.cs" />
     <Compile Include="WindowButton.cs">
       <SubType>Component</SubType>

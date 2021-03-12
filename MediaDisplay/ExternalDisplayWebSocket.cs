@@ -33,9 +33,21 @@ namespace MediaDisplay {
             if(Status != DisplayStatus.Closing) {
                 websocket = new WebsocketClient(new Uri($"ws://{address}"));
                 websocket.IsReconnectionEnabled = true;
-                websocket.ReconnectionHappened.Subscribe(info =>
-                    Console.WriteLine($"Reconnection happened, type: {info.Type}"));
+                websocket.ReconnectionHappened.Subscribe(info => {
+                    ExternalEventArgs args = new ExternalEventArgs();
+                    args.Action = ExternalAction.ConnectionChanged;
+                    args.Command = DisplayStatus.Connected;
+                    EventReceived(args);
+                    Console.WriteLine($"Reconnection happened, type: {info.Type}");
+                });
                 websocket.ReconnectTimeout = null;
+                websocket.DisconnectionHappened.Subscribe(info => {
+                    ExternalEventArgs args = new ExternalEventArgs();
+                    args.Action = ExternalAction.ConnectionChanged;
+                    args.Command = DisplayStatus.Connecting;
+                    EventReceived(args);
+                    Console.WriteLine($"Disconnect happened, type: {info.Type}");
+                });
                 websocket.MessageReceived.Subscribe(msg => MessageReceived(msg.Text));
                 websocket.StartOrFail().Wait();
                 SetStatus(DisplayStatus.Connected);

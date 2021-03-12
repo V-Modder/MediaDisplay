@@ -4,6 +4,7 @@ using System;
 namespace MediaDisplay {
     public class ExternalEventArgs : EventArgs {
         public static ExternalEventArgs FromJson(string json) => JsonConvert.DeserializeObject<ExternalEventArgs>(json);
+
         public string ToJson() {
             var settings = new JsonSerializerSettings();
             settings.NullValueHandling = NullValueHandling.Include;
@@ -14,8 +15,8 @@ namespace MediaDisplay {
         public ExternalAction Action { get; set; }
 
         [JsonProperty("command")]
-        public string Command { get; set; }
+        public object Command { get; set; }
     }
 
-    public enum ExternalAction { Click=1, Brightness=2 }
+    public enum ExternalAction { Click=1, Brightness=2, ConnectionChanged=3 }
 }

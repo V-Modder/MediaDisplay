@@ -88,6 +88,7 @@ namespace WindowsMediaController {
                 ControlSession.PlaybackInfoChanged += OnPlaybackInfoChanged;
             }
 
+
             private void OnPlaybackInfoChanged(GlobalSystemMediaTransportControlsSession session, PlaybackInfoChangedEventArgs args = null) {
                 var props = session.GetPlaybackInfo();
                 if (props.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Closed) {
@@ -99,6 +100,7 @@ namespace WindowsMediaController {
                     OnPlaybackStateChanged?.Invoke(this, props);
                 }
             }
+
 
             internal async void OnSongChange(GlobalSystemMediaTransportControlsSession session, MediaPropertiesChangedEventArgs args = null) {
                 var props = await session.TryGetMediaPropertiesAsync();

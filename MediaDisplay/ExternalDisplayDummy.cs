@@ -8,7 +8,7 @@ namespace MediaDisplay {
         }
 
         protected override void CallService(string data) {
-            Console.WriteLine($"ExternalDisplayDummy callService(), with {data} called");
+            //Console.WriteLine($"ExternalDisplayDummy callService(), with {data} called");
         }
 
         protected override void InitConnection() {

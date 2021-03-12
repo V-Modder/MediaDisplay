@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Threading;
 using System.Timers;
-using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace MediaDisplay {
     public abstract class ExternalDisplay : IDisposable {
@@ -17,6 +13,12 @@ namespace MediaDisplay {
         private long sendedBytesOld;
         private long sendedBytesPerSecond;
         private System.Timers.Timer speedCalculatorTimer;
+
+        public ExternalDisplay() {
+            speedCalculatorTimer = new System.Timers.Timer(2000);
+            speedCalculatorTimer.Elapsed += SpeedCalculatorTimer_Elapsed;
+            speedCalculatorTimer.AutoReset = true;
+        }
 
         public abstract void Dispose();
         protected abstract void CallService(string data);
@@ -34,6 +36,10 @@ namespace MediaDisplay {
 
         protected void SetStatus(DisplayStatus status) {
             this.status = status;
+            ExternalEventArgs args = new ExternalEventArgs();
+            args.Action = ExternalAction.ConnectionChanged;
+            args.Command = status;
+            EventReceived(args);
         }
 
         public void SendMetric(Metric data) {
@@ -57,12 +63,6 @@ namespace MediaDisplay {
                 InitConnection();
                 speedCalculatorTimer.Enabled = true;
             }).Start();
-        }
-
-        public ExternalDisplay() {
-            speedCalculatorTimer = new System.Timers.Timer(2000);
-            speedCalculatorTimer.Elapsed += SpeedCalculatorTimer_Elapsed;
-            speedCalculatorTimer.AutoReset = true;
         }
 
         private void SpeedCalculatorTimer_Elapsed(object sender, ElapsedEventArgs e) {

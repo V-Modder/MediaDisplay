@@ -14,6 +14,7 @@ namespace MediaDisplay {
         private Process playbackServerProcess;
         private PlaybackInfo playbackInfo;
         private bool hasChanges;
+        private NamedPipeClientStream client;
 
         public PlaybackInfoPipeClient() {
             pipeThread = new Thread(new ThreadStart(run));
@@ -26,6 +27,7 @@ namespace MediaDisplay {
             playbackServerProcess.StartInfo.WorkingDirectory = dir;
             playbackServerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             //playbackServerProcess.StartInfo.UseShellExecute = false;
+            client = new NamedPipeClientStream("PipesOfPiece");
         }
 
         private string getSubDirectory() {
@@ -45,6 +47,7 @@ namespace MediaDisplay {
 
         public void Stop() {
             if (pipeThread.IsAlive) {
+                client.Close();
                 pipeThread.Abort();
             }
             if(IsProcessRunning(playbackServerProcess)) {
@@ -66,11 +69,16 @@ namespace MediaDisplay {
         }
 
         private void run() {
-            NamedPipeClientStream client = new NamedPipeClientStream("PipesOfPiece");
-            client.Connect();
-            StreamReader reader = new StreamReader(client);
-            while (true) {
-                try {
+            StreamReader reader = null;
+            try {
+                while(!client.IsConnected) {
+                    try {
+                        client.Connect(100);
+                    }
+                    catch(Exception e) { }
+                }
+                reader = new StreamReader(client);
+                while (true) {
                     string line = reader.ReadLine();
                     if (line != null && line.Length > 0) {
                         PlaybackInfo info = ConvertJson(line);
@@ -82,13 +90,15 @@ namespace MediaDisplay {
                         }
                     }
                 }
-                catch(ThreadAbortException) {
-                    if (IsProcessRunning(playbackServerProcess)) {
-                        playbackServerProcess.Kill();
-                    }
-                    reader.Close();
-                    client.Close();
+            }
+            catch (ThreadAbortException) {
+                if (IsProcessRunning(playbackServerProcess)) {
+                    playbackServerProcess.Kill();
                 }
+                if(reader != null) {
+                    reader.Close();
+                }
+                client.Close();
             }
         }
 

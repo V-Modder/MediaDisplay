@@ -1,4 +1,6 @@
-﻿namespace MediaDisplay {
+﻿using System;
+
+namespace MediaDisplay {
     partial class MainForm {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -23,59 +25,22 @@
         /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.trb_frames = new System.Windows.Forms.TrackBar();
             this.lbl_frames = new System.Windows.Forms.Label();
             this.lbl_frames_set = new System.Windows.Forms.Label();
-            this.refreshTimer = new System.Windows.Forms.Timer(this.components);
             this.lbl_connection_status = new System.Windows.Forms.Label();
             this.lbl_title = new System.Windows.Forms.Label();
-            this.btn_minimize = new MediaDisplay.WindowButton();
             this.btn_close = new MediaDisplay.WindowButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.trb_display_brightness = new System.Windows.Forms.TrackBar();
             this.lbl_display_brightness_set = new System.Windows.Forms.Label();
             this.lbl_brightness = new System.Windows.Forms.Label();
             this.lbl_bandwidth = new System.Windows.Forms.Label();
-            this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trb_frames)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trb_display_brightness)).BeginInit();
             this.SuspendLayout();
-            // 
-            // notifyIcon
-            // 
-            this.notifyIcon.ContextMenuStrip = this.contextMenuStrip;
-            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-            this.notifyIcon.Text = "Media-Display";
-            this.notifyIcon.Visible = true;
-            // 
-            // contextMenuStrip
-            // 
-            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showToolStripMenuItem,
-            this.exitToolStripMenuItem});
-            this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(104, 48);
-            // 
-            // showToolStripMenuItem
-            // 
-            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-            this.showToolStripMenuItem.Text = "Show";
-            this.showToolStripMenuItem.Click += new System.EventHandler(this.ShowToolStripMenuItem_Click);
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // trb_frames
             // 
@@ -110,12 +75,6 @@
             this.lbl_frames_set.TabIndex = 5;
             this.lbl_frames_set.Text = "2";
             // 
-            // refreshTimer
-            // 
-            this.refreshTimer.Enabled = true;
-            this.refreshTimer.Interval = 1000;
-            this.refreshTimer.Tick += new System.EventHandler(this.RefreshTimer_Tick);
-            // 
             // lbl_connection_status
             // 
             this.lbl_connection_status.AutoSize = true;
@@ -137,21 +96,6 @@
             this.lbl_title.Size = new System.Drawing.Size(162, 25);
             this.lbl_title.TabIndex = 7;
             this.lbl_title.Text = "Media-Display";
-            // 
-            // btn_minimize
-            // 
-            this.btn_minimize.BackColor = System.Drawing.Color.Black;
-            this.btn_minimize.ForeColor = System.Drawing.Color.Gray;
-            this.btn_minimize.HighlightBackColor = System.Drawing.Color.Gray;
-            this.btn_minimize.HighlightForeColor = System.Drawing.Color.White;
-            this.btn_minimize.Location = new System.Drawing.Point(486, 0);
-            this.btn_minimize.Name = "btn_minimize";
-            this.btn_minimize.Size = new System.Drawing.Size(32, 32);
-            this.btn_minimize.TabIndex = 8;
-            this.btn_minimize.Text = "windowButton1";
-            this.btn_minimize.UseVisualStyleBackColor = false;
-            this.btn_minimize.WindowButtonType = MediaDisplay.WindowButtonType.Minimize;
-            this.btn_minimize.Click += new System.EventHandler(this.btn_minimize_Click);
             // 
             // btn_close
             // 
@@ -231,7 +175,6 @@
             this.Controls.Add(this.trb_display_brightness);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btn_close);
-            this.Controls.Add(this.btn_minimize);
             this.Controls.Add(this.lbl_title);
             this.Controls.Add(this.lbl_connection_status);
             this.Controls.Add(this.lbl_frames_set);
@@ -245,8 +188,6 @@
             this.Text = "Media Display";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
-            this.Resize += new System.EventHandler(this.MainForm_Resize);
-            this.contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trb_frames)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trb_display_brightness)).EndInit();
@@ -255,19 +196,16 @@
 
         }
 
-        #endregion
+        private void RefreshTimer_Tick(object sender, EventArgs e) {
+            throw new NotImplementedException();
+        }
 
-        private System.Windows.Forms.NotifyIcon notifyIcon;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
+        #endregion
         private System.Windows.Forms.TrackBar trb_frames;
         private System.Windows.Forms.Label lbl_frames;
         private System.Windows.Forms.Label lbl_frames_set;
-        private System.Windows.Forms.Timer refreshTimer;
         private System.Windows.Forms.Label lbl_connection_status;
         private System.Windows.Forms.Label lbl_title;
-        private WindowButton btn_minimize;
         private WindowButton btn_close;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TrackBar trb_display_brightness;
