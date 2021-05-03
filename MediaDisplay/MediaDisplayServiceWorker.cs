@@ -73,7 +73,7 @@ namespace MediaDisplay {
             computer.Open();
 
             foreach (HardwareSensor sensor in devices) {
-                IHardware hw = computer.Hardware.Where(h => h.Name == sensor.HardwareName).First();
+                IHardware hw = computer.Hardware.Where(h => h.Name.Contains(sensor.HardwareName)).First();
                 sensor.Sensor = hw.Sensors
                     .Where(s => s.Name == sensor.SensorName && s.SensorType == sensor.SensorType)
                     .FirstOrDefault();
