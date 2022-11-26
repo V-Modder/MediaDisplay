@@ -1,6 +1,6 @@
 from typing import List
 
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
 
 from server.cpu_gauge import CpuGauge
 

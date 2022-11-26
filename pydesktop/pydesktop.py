@@ -1,7 +1,7 @@
 import sys
 
-from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
 from pydesktop.config import Config
 from pydesktop.metric_sender import MetricSender

@@ -1,8 +1,8 @@
 import sys
 
-from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QIcon, QPalette
-from PyQt6.QtWidgets import QApplication, QLineEdit, QWidget, QLabel, QSystemTrayIcon, QMenu, QGridLayout, QSlider
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QIcon, QPalette
+from PyQt5.QtWidgets import QApplication, QLineEdit, QWidget, QLabel, QSystemTrayIcon, QMenu, QGridLayout, QSlider
 
 from pydesktop.config import Config
 from pydesktop.connection_status import ConnectionStatus

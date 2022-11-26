@@ -1,6 +1,6 @@
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPaintEvent, QImage, QPainter
-from PyQt6.QtWidgets import QWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPaintEvent, QImage, QPainter
+from PyQt5.QtWidgets import QWidget
 
 from metric.metric import GPU
 from server.gui_helper import GuiHelper

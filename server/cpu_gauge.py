@@ -1,6 +1,6 @@
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QResizeEvent, QPaintEvent, QPainter, QImage
-from PyQt6.QtWidgets import QLabel, QWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QResizeEvent, QPaintEvent, QPainter, QImage
+from PyQt5.QtWidgets import QLabel, QWidget
 
 from metric.metric import CPU
 from server.gui_helper import GuiHelper

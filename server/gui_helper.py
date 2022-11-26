@@ -1,5 +1,5 @@
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QLabel, QPushButton
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QLabel, QPushButton
 
 from server.analoggaugewidget import AnalogGaugeWidget 
 from server.gradiant_progressbar import GradiantProgressBar

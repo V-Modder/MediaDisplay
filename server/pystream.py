@@ -3,9 +3,9 @@ import platform
 import pyautogui
 import sys
 
-from PyQt6.QtCore import pyqtSignal, Qt, QTimer, QDateTime
-from PyQt6.QtGui import QIcon, QCloseEvent
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
+from PyQt5.QtGui import QIcon, QCloseEvent
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget
 
 from rpi_backlight import Backlight
 from rpi_backlight.utils import FakeBacklightSysfs
