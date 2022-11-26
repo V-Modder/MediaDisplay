@@ -1,0 +1,20 @@
+---
+- name: install zsh
+  apt:
+    name: zsh
+
+- name: File register
+  stat:
+    path: /home/pi/.oh-my-zsh
+  register: ohmyzshpi
+
+- name: Cloning oh-my-zsh
+  become: yes
+  become_user: "pi"
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh
+    dest: "/home/pi/.oh-my-zsh"
+  when: not ohmyzshpi.stat.exists
+
+#- name: Set zsh as default shell
+#  shell: chsh -s $(which zsh) pi

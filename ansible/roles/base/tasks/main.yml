@@ -1,0 +1,88 @@
+---
+- name: Deploy ssh config
+  copy:
+    src: .ssh
+    dest: "/home/{{ item }}/.ssh/"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    directory_mode: 0600
+  with_items: "pi"
+
+- name: Deploy boot config output pins
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /boot/config.txt
+    line: gpio=6,13,19,26=op
+  notify:
+      - Reboot
+
+- name: Deploy boot config input pins
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /boot/config.txt
+    line: gpio=6,13,19,26=op
+  notify:
+      - Reboot
+
+- name: Deploy boot config temp overlay
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /boot/config.txt
+    line: dtoverlay=w1-gpio
+  notify:
+      - Reboot
+
+- name: Setup backlight udev
+  copy:
+    src: backlight-permissions.rules
+    dest: "/etc/udev/rules.d/"
+    owner: "root"
+    group: "root"
+    directory_mode: 0600"
+  notify:
+      - Reboot
+
+- name: Install ktinker
+  apt:
+    name: python3-tk
+
+- name: Install rpi_backlight
+  become: yes
+  become_user: root
+  pip:
+    name: rpi_backlight
+
+- name: Install RPI.GPIO
+  pip:
+    name: "RPI.GPIO"
+
+- name: Install Xlib
+  pip:
+    name: Xlib
+
+- name: Install eventlet
+  pip:
+    name: eventlet
+
+- name: Install flask
+  pip:
+    name: flask
+
+- name: Install flask-socketio
+  pip:
+    name: flask-socketio
+
+- name: Install requests
+  pip:
+    name: requests
+
+- name: Install pyautogui
+  pip:
+    name: pyautogui
+
+- name: Install PyQt5
+  apt:
+    name: python3-pyqt5
