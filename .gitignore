@@ -342,3 +342,4 @@ healthchecksdb
 *__pycache__* 
 build/*
 *.spec
+config.json
