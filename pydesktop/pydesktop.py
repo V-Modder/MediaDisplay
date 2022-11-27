@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
 from pydesktop.config import Config
 from pydesktop.metric_sender import MetricSender
+from pydesktop.pydesktop_config import PyDesktopConfig
 
 class PyDesktop:
     def __init__(self) -> None:
@@ -12,10 +13,11 @@ class PyDesktop:
         self.sender = MetricSender(conf)
         self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
+        self.window = None
 
     def show(self):
         if self.window is None:
-            self.window = PyDesktop()
+            self.window = PyDesktopConfig(self.sender)
             self.window.show()
 
     def exit(self):

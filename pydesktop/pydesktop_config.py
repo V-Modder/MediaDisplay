@@ -1,15 +1,15 @@
 import sys
 
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QIcon, QPalette
-from PyQt5.QtWidgets import QApplication, QLineEdit, QWidget, QLabel, QSystemTrayIcon, QMenu, QGridLayout, QSlider
+from PyQt5.QtGui import QPalette
+from PyQt5.QtWidgets import QLineEdit, QWidget, QLabel, QGridLayout, QSlider
 
 from pydesktop.config import Config
 from pydesktop.connection_status import ConnectionStatus
+from pydesktop.metric_sender import MetricSender
 
 class PyDesktopConfig(QWidget):
-    def __init__(self):
-        global sender
+    def __init__(self, sender:MetricSender):
         super().__init__()
 
         self.setFixedWidth(800)
