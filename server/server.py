@@ -19,7 +19,7 @@ class MetricServer(Namespace, Thread):
 
     def run(self):
         print("Starting server at port 5001")
-        self.socketio.run(self.__app, host="127.0.0.1", port=5001)
+        self.socketio.run(self.__app, host="0.0.0.0", port=5001)
 
     def stop(self):
         eventlet.wsgi.is_accepting = False
