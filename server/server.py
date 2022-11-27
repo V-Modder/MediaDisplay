@@ -3,6 +3,7 @@ import eventlet.wsgi
 from flask import Flask, request
 from flask_socketio import SocketIO, Namespace
 from threading import Thread
+import traceback
 
 from metric.metric import Metric
 
@@ -18,7 +19,7 @@ class MetricServer(Namespace, Thread):
         self.__receiver = receiver
 
     def run(self):
-        print("Starting server at port 5001")
+        print("Starting server at 0.0.0.0:5001")
         self.socketio.run(self.__app, host="0.0.0.0", port=5001)
 
     def stop(self):
@@ -28,21 +29,38 @@ class MetricServer(Namespace, Thread):
     def on_connect(self):
         print("socket connected, ", request.sid)
         print("Headers:", request.headers["Cpu-Count"])
-        self.__receiver.restore(int(request.headers["Cpu-Count"]))
+        try:
+            self.__receiver.restore(int(request.headers["Cpu-Count"]))
+        except Exception as e:
+            traceback.print_exception(e)
 
     def on_disconnect(self):
         print("socket disconnected")
-        self.__receiver.reset()
+        try:
+            self.__receiver.reset()
+        except Exception as e:
+            traceback.print_exception(e)
 
     def on_get_brightness(self):
         print('received get_brightness: ')
-        self.emit('receive_brightness', self.__receiver.get_brightness())
+        value = 0
+        try:
+            value = self.__receiver.get_brightness()
+        except Exception as e:
+            traceback.print_exception(e)
+        self.emit('receive_brightness', value)
 
     def on_set_brightness(self, message):
         print('received set_brightness: ', message)
-        self.__receiver.set_brightness(message)
+        try:
+            self.__receiver.set_brightness(message)
+        except Exception as e:
+            traceback.print_exception(e)
 
     def on_metric(self, message):
-        metric = Metric.deserialize(message)
         #print('received metric: ')
-        self.__receiver.receive(metric)
+        try:
+            metric = Metric.deserialize(message)
+            self.__receiver.receive(metric)
+        except Exception as e:
+            traceback.print_exception(e)

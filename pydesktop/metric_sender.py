@@ -1,6 +1,7 @@
 from socketio import Client, ClientNamespace
 from threading import Thread
 from time import sleep
+import traceback
 
 from metric.metric import Metric
 from metric.metric_builder import MetricBuilder
@@ -18,7 +19,7 @@ class MetricSender(ClientNamespace):
     def __init__(self, conf : Config) -> None:
         super().__init__(None)
         self.conf = conf
-        socket = Client()
+        socket = Client(reconnection_attempts=20)
         socket.register_namespace(self)
         self.__sending_thread = Thread(target=self.run_sending)
         self.__client_thread = Thread(target=self.run_client)
@@ -53,8 +54,11 @@ class MetricSender(ClientNamespace):
 
     def on_receive_brightness(self, data):
         print('receive_brightness received with ', data)
-        if self.__listener is not None:            
-            self.__listener.brightness_received(data)
+        try:
+            if self.__listener is not None:            
+                self.__listener.brightness_received(data)
+        except Exception as e:
+            traceback.print_exception(e)
 
     def change_brightness(self, brightness):
         if self.client.connected:
@@ -76,8 +80,8 @@ class MetricSender(ClientNamespace):
                         self.call("metric", metric.serialize(), timeout=1)
                 else:
                     sleep(0.5)
-            except:
-                print("exeption, timeout probably")
+            except Exception as e:
+                traceback.print_exception(e)
 
     def run_client(self):
         while self.__run_connecting:
@@ -85,16 +89,19 @@ class MetricSender(ClientNamespace):
                 self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
                 self.client.wait()
             except Exception as e:
-                print(e)
+                traceback.print_exception(e)
                 sleep(0.5)
 
     def set_listener(self, listener):
         self.__listener = listener
 
     def change_conf(self, conf : Config):
-        self.conf = conf
-        self.stop()
-        self.start()
+        try:
+            self.conf = conf
+            self.stop()
+            self.start()
+        except Exception as e:
+            traceback.print_exception(e)
     
     def get_status(self) -> ConnectionStatus:
         if not self.__run_connecting:
