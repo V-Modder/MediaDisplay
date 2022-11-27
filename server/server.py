@@ -39,7 +39,7 @@ class MetricServer(Namespace, Thread):
         self.emit('receive_brightness', self.__receiver.get_brightness())
 
     def on_set_brightness(self, message):
-        print('received set_brightness: ' + message)
+        print('received set_brightness: ', message)
         self.__receiver.set_brightness(message)
 
     def on_metric(self, message):
