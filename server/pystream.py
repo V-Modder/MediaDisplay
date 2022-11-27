@@ -127,7 +127,7 @@ class PyStream(QMainWindow):
         self.show()
 
     def is_raspberry_pi(self) -> bool:
-        return platform.machine() == 'armv71'
+        return platform.machine() == 'armv7l'
 
     def __timer_tick(self):
         time = QDateTime.currentDateTime()
