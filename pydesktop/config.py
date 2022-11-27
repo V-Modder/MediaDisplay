@@ -11,7 +11,7 @@ class Config:
         self.server = server
 
     def save(self):
-        with open(FILENAME) as file:
+        with open(FILENAME, "w") as file:
             file.write(jsonpickle.encode(self))
 
     def load_or_create():
