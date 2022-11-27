@@ -23,6 +23,8 @@ class MetricSender(ClientNamespace):
         self.__sending_thread = Thread(target=self.run_sending)
         self.__client_thread = Thread(target=self.run_client)
         self.__listener = None
+        self.__run_connecting = False
+        self.__run_sending = False
 
     def start(self):
         self.__run_connecting = True
