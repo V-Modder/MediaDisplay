@@ -57,8 +57,8 @@ class MetricSender(ClientNamespace):
         try:
             if self.__listener is not None:            
                 self.__listener.brightness_received(data)
-        except Exception as e:
-            traceback.print_exception(e)
+        except Exception:
+            traceback.print_exc()
 
     def change_brightness(self, brightness):
         if self.client.connected:
@@ -80,16 +80,16 @@ class MetricSender(ClientNamespace):
                         self.call("metric", metric.serialize(), timeout=1)
                 else:
                     sleep(0.5)
-            except Exception as e:
-                traceback.print_exception(e)
+            except Exception:
+                traceback.print_exc()
 
     def run_client(self):
         while self.__run_connecting:
             try:
                 self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
                 self.client.wait()
-            except Exception as e:
-                traceback.print_exception(e)
+            except Exception:
+                traceback.print_exc()
                 sleep(0.5)
 
     def set_listener(self, listener):
@@ -100,8 +100,8 @@ class MetricSender(ClientNamespace):
             self.conf = conf
             self.stop()
             self.start()
-        except Exception as e:
-            traceback.print_exception(e)
+        except Exception:
+            traceback.print_exc()
     
     def get_status(self) -> ConnectionStatus:
         if not self.__run_connecting:
