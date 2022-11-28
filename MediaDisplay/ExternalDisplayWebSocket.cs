@@ -29,29 +29,34 @@ namespace MediaDisplay {
             IpAddress address = null;
             do {
                 address = discoverer.discover();
-            } while (address == null && Status != DisplayStatus.Closing);
+            } while ((address == null 
+                || !address.Ip.StartsWith("192"))
+                && Status != DisplayStatus.Closing);
+            
             if(Status != DisplayStatus.Closing) {
                 websocket = new WebsocketClient(new Uri($"ws://{address}"));
                 websocket.IsReconnectionEnabled = true;
                 websocket.ReconnectionHappened.Subscribe(info => {
-                    ExternalEventArgs args = new ExternalEventArgs();
-                    args.Action = ExternalAction.ConnectionChanged;
-                    args.Command = DisplayStatus.Connected;
-                    EventReceived(args);
+                    SetStatus(DisplayStatus.Connected);
                     Console.WriteLine($"Reconnection happened, type: {info.Type}");
                 });
                 websocket.ReconnectTimeout = null;
                 websocket.DisconnectionHappened.Subscribe(info => {
-                    ExternalEventArgs args = new ExternalEventArgs();
-                    args.Action = ExternalAction.ConnectionChanged;
-                    args.Command = DisplayStatus.Connecting;
-                    EventReceived(args);
+                    SetStatus(DisplayStatus.Connecting);
                     Console.WriteLine($"Disconnect happened, type: {info.Type}");
                 });
                 websocket.MessageReceived.Subscribe(msg => MessageReceived(msg.Text));
-                websocket.StartOrFail().Wait();
-                SetStatus(DisplayStatus.Connected);
             }
+        }
+
+        public override void ConnectDisplay() {
+            websocket.StartOrFail().Wait();
+            SetStatus(DisplayStatus.Connected);
+        }
+
+        public override void Disconnect() {
+            websocket.Stop(WebSocketCloseStatus.NormalClosure, "Stop");
+            SetStatus(DisplayStatus.Disconnected);
         }
     }
 }

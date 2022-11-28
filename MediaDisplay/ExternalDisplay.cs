@@ -23,6 +23,8 @@ namespace MediaDisplay {
         public abstract void Dispose();
         protected abstract void CallService(string data);
         protected abstract void InitConnection();
+        public abstract void ConnectDisplay();
+        public abstract void Disconnect();
 
         protected virtual void EventReceived(ExternalEventArgs e) {
             EventHandler<ExternalEventArgs> handler = OnEventReceived;
@@ -49,7 +51,9 @@ namespace MediaDisplay {
                     sendedBytes += System.Text.Encoding.UTF8.GetByteCount(json);
                     CallService(json);
                 }
-                finally {
+                catch(Exception e) {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace.ToString()); 
                 }
             }).Start();
         }
@@ -61,6 +65,7 @@ namespace MediaDisplay {
         public void Connect() {
             new Thread(() => {
                 InitConnection();
+                ConnectDisplay();
                 speedCalculatorTimer.Enabled = true;
             }).Start();
         }

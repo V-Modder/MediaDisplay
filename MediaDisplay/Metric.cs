@@ -26,8 +26,8 @@ namespace MediaDisplay {
         [JsonProperty("time")]
         public string Time { get; set; }
 
-        [JsonProperty("room_temperature")]
-        public double RoomTemperature { get; set; }
+        //[JsonProperty("room_temperature")]
+        //public double RoomTemperature { get; set; }
 
         [JsonProperty("playback_info")]
         public PlaybackInfo PlaybackInfo { get; set; }

@@ -16,5 +16,12 @@ namespace MediaDisplay {
             Thread.Sleep(10000);
             SetStatus(DisplayStatus.Connected);
         }
+        public override void Disconnect() {
+            SetStatus(DisplayStatus.Disconnected);
+        }
+
+        public override void ConnectDisplay() {
+            SetStatus(DisplayStatus.Connected);
+        }
     }
 }

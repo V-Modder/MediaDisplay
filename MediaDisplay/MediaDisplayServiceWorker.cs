@@ -1,12 +1,8 @@
-﻿using OpenHardwareMonitor.Hardware;
+﻿using Microsoft.Win32;
+using OpenHardwareMonitor.Hardware;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
-// System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using static MediaDisplay.SendInputWrapper;
 
@@ -16,13 +12,10 @@ namespace MediaDisplay {
 
         private ExternalDisplay externalDisplay;
         private DisplayStatus displayStatus;
-        private Temper temper;
         private NetworkMonitor networkMonitor;
-        private PlaybackInfoPipeClient playbackInfoPipeClient;
         private bool brightnessChanged;
         private int displayBrightness;
         private bool getBrightness;
-        //private Thread thread;
         private System.Timers.Timer timer;
         private StateChangedEventHandler listeners;
         private bool running;
@@ -45,21 +38,30 @@ namespace MediaDisplay {
             new HardwareSensor("MEM_LOAD", "Generic Memory", "Used Memory", SensorType.Data),
             new HardwareSensor("MEM_LOAD", "Generic Memory", "Available Memory", SensorType.Data),
 
-            new HardwareSensor("GPU_TEMP", "NVIDIA GeForce RTX 2070", "GPU Core", SensorType.Temperature),
-            new HardwareSensor("GPU_LOAD", "NVIDIA GeForce RTX 2070", "GPU Core", SensorType.Load),
-            new HardwareSensor("GPU_MEM_LOAD", "NVIDIA GeForce RTX 2070", "GPU Memory", SensorType.Load)
+            new HardwareSensor("GPU_TEMP", "NVIDIA GeForce RTX 3080 Ti", "GPU Core", SensorType.Temperature),
+            new HardwareSensor("GPU_LOAD", "NVIDIA GeForce RTX 3080 Ti", "GPU Core", SensorType.Load),
+            new HardwareSensor("GPU_MEM_LOAD", "NVIDIA GeForce RTX 3080 Ti", "GPU Memory", SensorType.Load)
         };
 
         public MediaDisplayServiceWorker(ExternalDisplay externalDisplay) {
             this.externalDisplay = externalDisplay;
             this.externalDisplay.OnEventReceived += ExternalDisplay_EventReceived;
             running = false;
-            temper = new Temper(IntPtr.Zero);
             brightnessChanged = false;
             getBrightness = true;
             timer = new System.Timers.Timer(1000);
             timer.Elapsed += RefreshTimer_Tick;
             InitDevices();
+            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+        }
+
+        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e) {
+            if(e.Mode == PowerModes.Suspend) {
+                externalDisplay.Disconnect();
+            }
+            else if(e.Mode == PowerModes.Resume) {
+                externalDisplay.ConnectDisplay();
+            }
         }
 
         private void InitDevices() {
@@ -80,7 +82,6 @@ namespace MediaDisplay {
             }
 
             networkMonitor = new NetworkMonitor();
-            playbackInfoPipeClient = new PlaybackInfoPipeClient();
         }
 
         public event StateChangedEventHandler Listener {
@@ -92,7 +93,6 @@ namespace MediaDisplay {
             if (!IsRunning) {
                 running = true;
                 networkMonitor.StartMonitoring();
-                playbackInfoPipeClient.Start();
                 externalDisplay.Connect();
                 timer.Start();
             }
@@ -105,7 +105,6 @@ namespace MediaDisplay {
                     timer.Close();
                 }
                 networkMonitor.StopMonitoring();
-                playbackInfoPipeClient.Stop();
             }
         }
 
@@ -206,17 +205,7 @@ namespace MediaDisplay {
             metric.Network.Down = networkMonitor.sumDownloadSpeed();
             metric.Network.Up = networkMonitor.sumUploadSpeed();
 
-            try {
-                metric.RoomTemperature = temper.GetTemp();
-            }
-            catch (Exception e) {
-                metric.RoomTemperature = 0;
-            }
             metric.Time = DateTime.Now.ToString("HH:mm");
-
-            if (playbackInfoPipeClient.HasChanges) {
-                metric.PlaybackInfo = playbackInfoPipeClient.GetPlaybackInfo();
-            }
 
             if (brightnessChanged) {
                 metric.DisplayBrightness = displayBrightness;
