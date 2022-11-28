@@ -18,7 +18,12 @@ class PyDesktop:
     def show(self):
         if self.window is None:
             self.window = PyDesktopConfig(self.sender)
+            self.window.closeEvent = self.closeEvent
             self.window.show()
+
+    def closeEvent(self, event):
+        self.window = None
+        event.accept()
 
     def exit(self):
         self.app.quit()

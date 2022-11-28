@@ -78,11 +78,6 @@ class PyDesktopConfig(QWidget):
     def on_sld_brightness_value_changed(self):
         self.metric_sender.change_brightness(self.sender().value())
 
-    def closeEvent(self, event):
-        global window
-        window = None
-        event.accept()
-    
     def brightness_received(self, brightness):
         self.sld_brightness.valueChanged.disconnect()
         self.sld_brightness.setValue(brightness)
