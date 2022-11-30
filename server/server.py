@@ -32,14 +32,14 @@ class MetricServer(Namespace, Thread):
         try:
             self.__receiver.restore(int(request.headers["Cpu-Count"]))
         except Exception as e:
-            traceback.print_exception(e)
+            traceback.print_exc()
 
     def on_disconnect(self):
         print("socket disconnected")
         try:
             self.__receiver.reset()
         except Exception as e:
-            traceback.print_exception(e)
+            traceback.print_exc()
 
     def on_get_brightness(self):
         print('received get_brightness: ')
@@ -47,7 +47,7 @@ class MetricServer(Namespace, Thread):
         try:
             value = self.__receiver.get_brightness()
         except Exception as e:
-            traceback.print_exception(e)
+            traceback.print_exc()
         self.emit('receive_brightness', value)
 
     def on_set_brightness(self, message):
@@ -55,7 +55,7 @@ class MetricServer(Namespace, Thread):
         try:
             self.__receiver.set_brightness(message)
         except Exception as e:
-            traceback.print_exception(e)
+            traceback.print_exc()
 
     def on_metric(self, message):
         #print('received metric: ')
@@ -63,4 +63,4 @@ class MetricServer(Namespace, Thread):
             metric = Metric.deserialize(message)
             self.__receiver.receive(metric)
         except Exception as e:
-            traceback.print_exception(e)
+            traceback.print_exc()
