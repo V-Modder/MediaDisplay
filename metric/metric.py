@@ -97,7 +97,7 @@ class Metric(object):
             cpus = None
 
         if obj.get("gpu") is not None:
-            gpu = [GPU.from_dict(y) for y in obj.get("gpu")]
+            gpu = GPU.from_dict(obj.get("gpu"))
         else:
             gpu = None
 
