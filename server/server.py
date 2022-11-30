@@ -24,7 +24,7 @@ class MetricServer(Namespace, Thread):
 
     def stop(self):
         eventlet.wsgi.is_accepting = False
-        eventlet.kill()
+        eventlet.kill(Exception())
 
     def on_connect(self):
         print("socket connected, ", request.sid)
