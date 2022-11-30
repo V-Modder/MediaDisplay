@@ -31,12 +31,14 @@ class GpuPanel(QWidget):
         self.progress_gpu_mem_load.setVisible(value)
     
     def paintEvent(self, event: QPaintEvent) -> None:
+        painter = QPainter(self)
         if self.__show_picture:
             image = QImage()
             image.load("server/resource/gpu.png")
-            painter = QPainter(self)
             painter.setRenderHint(QPainter.RenderHint.Antialiasing)
             painter.drawImage(35, 0, image.scaled(229, 56, transformMode=Qt.TransformationMode.SmoothTransformation))
-            painter.end()
         else:
-            super().paintEvent(event)
+            painter.setPen(Qt.GlobalColor.transparent)
+            painter.fillRect(0, 0, self.width(), self.height())
+        painter.end()
+        super().paintEvent(event)
