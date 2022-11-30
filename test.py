@@ -44,7 +44,7 @@ computer = initialize_cputhermometer()
 fetch_stats(computer)
 """
 
-import clr
+if os.name == 'nt': import clr
 import GPUtil
 import psutil
 import os 
@@ -64,13 +64,14 @@ class MetricBuilder():
                 self.computer.Close()
 
         def initialize_cputhermometer(self):
-            file = 'D:\workspace\MediaDisplay\OpenHardwareMonitorLib.dll'
+            file = Path(__file__).parent.absolute() + '\OpenHardwareMonitorLib.dll'
             clr.AddReference(file)
 
             from OpenHardwareMonitor import Hardware
 
             computer = Hardware.Computer()
             computer.CPUEnabled = True
+            computer.GPUEnabled = True
             computer.Open()
             return computer
 
@@ -101,14 +102,24 @@ class MetricBuilder():
         net_io_2 = psutil.net_io_counters()
         met.network = Network((net_io_2.bytes_sent - net_io.bytes_sent) * (1.0 / interval), (net_io_2.bytes_recv - net_io.bytes_recv) * (1.0 / interval))
 
-        gpus = GPUtil.getGPUs()
-        for gpu in gpus:
-            met.gpu = GPU(gpu.load * 100, gpu.memoryUsed / gpu.memoryTotal * 100, gpu.temperature)
+        met.gpu = self.fetch_gpu()
 
         return met
 
 
-    if os.name != 'nt':
+    if os.name == 'nt':
+        def fetch_temperatures(self):
+            result = []
+            for h in self.computer.Hardware:
+                if int(h.HardwareType) == MetricBuilder.HARDWARETYPES.index('CPU'):
+                    h.Update()
+                    for sensor in h.Sensors:
+                        if int(sensor.SensorType) == MetricBuilder.SENSORTYPES.index('Temperature') \
+                            and sensor.Name.startswith("CPU Core #"):
+                            result.append(sensor.Value)
+
+            return result
+    else:
         def fetch_temperatures(self):
             result = []
             for temp in psutil.sensors_temperatures()["coretemp"]:
@@ -116,16 +127,31 @@ class MetricBuilder():
                     result.append(temp.current)
             
             return result
-    else:
-        def fetch_temperatures(self):
-            result = []
+
+    if os.name == 'nt':
+        def fetch_gpu(self):
             for h in self.computer.Hardware:
-                h.Update()
-                for sensor in h.Sensors:
-                    if int(sensor.SensorType) == MetricBuilder.SENSORTYPES.index('Temperature') and sensor.Name.startswith("CPU Core #"):
-                        result.append(sensor.Value)
-            
-            return result
+                if int(h.HardwareType) == MetricBuilder.HARDWARETYPES.index('GpuNvidia'):
+                    h.update()
+                    gpu = GPU()
+                    for sensor in h.Sensors:
+                        if int(sensor.SensorType) == MetricBuilder.SENSORTYPES.index('Temperature') \
+                            and sensor.Name.startswith("GPU Core"):
+                            gpu.temperature = sensor.Value
+                        elif int(sensor.SensorType) == MetricBuilder.SENSORTYPES.index('Load') \
+                              and sensor.Name.startswith("GPU Core"):
+                            gpu.load = sensor.Value
+                        elif int(sensor.SensorType) == MetricBuilder.SENSORTYPES.index('Load') \
+                              and sensor.Name.startswith("GPU Memory"):
+                            gpu.memory_load = sensor.Value
+                    return gpu
+            return None
+    else:
+        def fetch_gpu(self):
+            gpus = GPUtil.getGPUs()
+            for gpu in gpus:
+                return GPU(gpu.load * 100, gpu.memoryUsed / gpu.memoryTotal * 100, gpu.temperature)
+            return None
 
     def cpu_core_count():
         return psutil.cpu_count(False)
