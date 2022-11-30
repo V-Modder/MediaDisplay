@@ -29,6 +29,7 @@ class GpuPanel(QWidget):
         self.label_gpu_temp.setVisible(value)
         self.progress_gpu_load.setVisible(value)
         self.progress_gpu_mem_load.setVisible(value)
+        self.repaint()
     
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QPainter(self)
