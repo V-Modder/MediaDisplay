@@ -4,12 +4,5 @@
   become: yes
   roles:
     - role: base
-      #tags:
-      #  - base
     - role: zsh
-    #  tags: 
-    #  - base
-    #  - zsh
-    #- role: service
-    #  tags:
-    #    - service
+    - role: service
