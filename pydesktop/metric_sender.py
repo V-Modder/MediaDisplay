@@ -14,11 +14,12 @@ class MetricSender(ClientNamespace):
     __client_thread : Thread
     __run_connecting : bool
     __run_sending : bool
-    conf : Config
+    __conf : Config
+    __metric_builder : MetricBuilder
 
     def __init__(self, conf : Config) -> None:
         super().__init__(None)
-        self.conf = conf
+        self.__conf = conf
         socket = Client(reconnection_attempts=20)
         socket.register_namespace(self)
         self.__sending_thread = Thread(target=self.run_sending)
@@ -26,6 +27,7 @@ class MetricSender(ClientNamespace):
         self.__listener = None
         self.__run_connecting = False
         self.__run_sending = False
+        self.__metric_builder = MetricBuilder()
 
     def start(self):
         self.__run_connecting = True
@@ -69,7 +71,7 @@ class MetricSender(ClientNamespace):
             self.client.call("get_brightness")
 
     def create_metric(self) -> Metric:
-        return MetricBuilder.build_metric(0.5)
+        return self.__metric_builder.build_metric(0.5)
 
     def run_sending(self):
         while self.__run_sending:
@@ -77,7 +79,7 @@ class MetricSender(ClientNamespace):
                 if self.client.connected:
                     metric = self.create_metric()
                     if self.client.connected:
-                        self.call("metric", metric.serialize(), timeout=1)
+                        self.call("metric", metric.serialize(), timeout=3)
                 else:
                     sleep(0.5)
             except Exception:
@@ -86,7 +88,7 @@ class MetricSender(ClientNamespace):
     def run_client(self):
         while self.__run_connecting:
             try:
-                self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
+                self.client.connect(self.__conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
                 self.client.wait()
             except Exception:
                 traceback.print_exc()
@@ -97,7 +99,7 @@ class MetricSender(ClientNamespace):
 
     def change_conf(self, conf : Config):
         try:
-            self.conf = conf
+            self.__conf = conf
             self.stop()
             self.start()
         except Exception:
