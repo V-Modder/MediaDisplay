@@ -1,0 +1,21 @@
+---
+- name: File register
+  stat:
+    path: /home/pi/projects/MediaDisplay
+  register: MediaDisplay
+
+- name: Cloning MediaDisplay
+  become: yes
+  become_user: "pi"
+  git:
+    repo: https://github.com/V-Modder/MediaDisplay
+    dest: "/home/pi/projects/MediaDisplay"
+  when: not MediaDisplay.stat.exists
+
+- name: Updating MediaDisplay
+  become: yes
+  become_user: "pi"
+  git:
+    repo: https://github.com/V-Modder/MediaDisplay
+    dest: "/home/pi/projects/MediaDisplay"
+  when: not MediaDisplay.stat.exists
