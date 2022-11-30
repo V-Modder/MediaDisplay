@@ -38,7 +38,6 @@ class GpuPanel(QWidget):
             painter.setRenderHint(QPainter.RenderHint.Antialiasing)
             painter.drawImage(35, 0, image.scaled(229, 56, transformMode=Qt.TransformationMode.SmoothTransformation))
         else:
-            painter.setPen(Qt.GlobalColor.transparent)
-            painter.fillRect(0, 0, self.width(), self.height())
+            painter.fillRect(0, 0, self.width(), self.height(), Qt.GlobalColor.transparent)
         painter.end()
         super().paintEvent(event)
