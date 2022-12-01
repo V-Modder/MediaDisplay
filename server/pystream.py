@@ -86,7 +86,7 @@ class PyStream(QMainWindow):
         self.cpu_panel.setGeometry(26, 25, 748, 350)
 
         self.gpu_panel = GpuPanel(self.panel_1)
-        self.gpu_panel.setGeometry(0, 384, 265, 96)
+        self.gpu_panel.setGeometry(35, 390, 230, 50)
 
         GuiHelper.create_label(self.panel_1, 280, 395, text="Down")
         GuiHelper.create_label(self.panel_1, 280, 419, text="Up")
