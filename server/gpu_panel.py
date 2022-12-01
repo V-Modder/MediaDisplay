@@ -23,7 +23,7 @@ class GpuPanel(QWidget):
         self.progress_gpu_mem_load.setValue(value.memory_load)
 
     def show_gui(self, value):
-        self.label_image.setVisible(not value)
+        self.label_background.setVisible(not value)
         self.label_gpu.setVisible(value)
         self.label_gpu_temp.setVisible(value)
         self.progress_gpu_load.setVisible(value)
