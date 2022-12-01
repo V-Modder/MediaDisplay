@@ -1,7 +1,11 @@
 import glob
 import os
+import time
 
-class PyTemp():
+from PyQt5.QtCore import QThread
+
+class PyTemp(QThread):
+    temperature : int
 
     def __init__(self):
         super().__init__()
@@ -15,15 +19,15 @@ class PyTemp():
         else:
             self.__device_file = None   
 
-        self.last_temperature = 0
+        self.temperature = 0
 
-    def read(self) -> int:
-        try:
-            temp = self.__read_temp()
-            self.last_temperature = temp
-            return temp
-        except:
-            return self.last_temperature
+    def run(self):
+        while True:
+            try:
+                self.temperature = self.__read_temp()
+            except:
+                pass
+            time.sleep(1)
 
     def __read_temp(self):
         lines = self.__read_temp_raw()

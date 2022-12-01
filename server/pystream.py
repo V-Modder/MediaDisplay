@@ -38,6 +38,7 @@ class PyStream(QMainWindow):
         self.__server.start()
         self.__relay = PyRelay()
         self.__temp = PyTemp()
+        self.__temp.start()
         self.__pysense = PySense()
         self.__stats_tab_index = 0
         self.__buttons_tab_index = 1
@@ -132,7 +133,7 @@ class PyStream(QMainWindow):
     def __timer_tick(self):
         time = QDateTime.currentDateTime()
         timeDisplay = time.toString('hh:mm')
-        temp = self.__temp.read()
+        temp = self.__temp.temperature
         active_usb = "2" if self.__pysense.check_state(PySense.INPUT_1) else "1"
 
         self.label_time.setText(timeDisplay)
