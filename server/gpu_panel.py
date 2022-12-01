@@ -1,5 +1,3 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPaintEvent
 from PyQt5.QtWidgets import QWidget
 
 from metric.metric import GPU
