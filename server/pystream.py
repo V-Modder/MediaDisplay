@@ -17,6 +17,7 @@ from metric.metric import Metric
 from server.cpu_panel import CpuPanel
 from server.gpu_panel import GpuPanel
 from server.gui_helper import GuiHelper
+from server.network_panel import NetworkPanel
 from server.pysense import PySense
 from server.pytemp import PyTemp
 from server.pyrelay import PyRelay
@@ -88,12 +89,8 @@ class PyStream(QMainWindow):
         self.gpu_panel = GpuPanel(self.panel_1)
         self.gpu_panel.setGeometry(35, 390, 230, 50)
 
-        GuiHelper.create_label(self.panel_1, 280, 395, text="Down")
-        GuiHelper.create_label(self.panel_1, 280, 419, text="Up")
-        self.label_net_down = GuiHelper.create_label(self.panel_1, 430, 395, width=100, height=25, text="0")
-        self.label_net_down.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.label_net_up = GuiHelper.create_label(self.panel_1, 430, 419, width=100, height=25, text="0")
-        self.label_net_up.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.network_panel = NetworkPanel(self.panel_1)
+        self.network_panel.setGeometry(280, 395, 250, 51)
 
         GuiHelper.create_label(self.panel_1, 551, 390, text="Memory", font_size=18)
         self.progress_mem_load = GuiHelper.create_progressbar(self.panel_1, 551, 421, 203, 20)
@@ -163,11 +160,9 @@ class PyStream(QMainWindow):
             self.gpu_panel.show_gui(False)
         
         if data.network is not None:
-            self.label_net_down.setText(data.network.get_down_str())
-            self.label_net_up.setText(data.network.get_up_str())
+            self.network_panel.update_values(data.network)
         else:
-            self.label_net_down.setText("0B")
-            self.label_net_up.setText("0B")
+            self.network_panel.reset()
 
     def receive_gui(self, data:Metric):
         if self.is_updating == False:
