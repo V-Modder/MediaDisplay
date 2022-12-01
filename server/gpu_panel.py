@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPaintEvent, QImage, QPainter
+from PyQt5.QtGui import QPaintEvent
 from PyQt5.QtWidgets import QWidget
 
 from metric.metric import GPU
@@ -31,17 +31,3 @@ class GpuPanel(QWidget):
         self.progress_gpu_load.setVisible(value)
         self.progress_gpu_mem_load.setVisible(value)
         self.repaint()
-    
-    def paintEvent(self, event: QPaintEvent) -> None:
-        """
-        painter = QPainter(self)
-        if self.__show_picture:
-            image = QImage()
-            image.load("server/resource/gpu.png")
-            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-            painter.drawImage(35, 0, image.scaled(229, 56, transformMode=Qt.TransformationMode.SmoothTransformation))
-        else:
-            painter.fillRect(0, 0, self.width(), self.height(), Qt.GlobalColor.transparent)
-        painter.end()
-        """
-        super().paintEvent(event)
