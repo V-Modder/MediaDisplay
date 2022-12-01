@@ -11,7 +11,7 @@ class CpuPanel(QWidget):
         super().__init__(parent)
 
         layout = QVBoxLayout()
-        layout.setSpacing(12)
+        layout.setSpacing(8)
         self.top_row = QHBoxLayout()
         self.bottom_row = QHBoxLayout()
         layout.addLayout(self.top_row)

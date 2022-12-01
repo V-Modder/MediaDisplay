@@ -10,13 +10,9 @@ class CpuGauge(QWidget):
     value : int
     gauge : AnalogGaugeWidget
     label : QLabel
-    label_background : QLabel 
 
     def __init__(self, parent) -> None:
         super().__init__(parent)
-
-        self.label_background = GuiHelper.create_label(self, None, None, None, None, image="server/resource/cpu_gauge.jpg")
-        self.label_background.setScaledContents(True)
 
         self.gauge = GuiHelper.create_gauge(self)
         
@@ -33,11 +29,9 @@ class CpuGauge(QWidget):
         self.repaint()
     
     def resize(self):
-        self.label_background.setGeometry(0, 0, self.width(), self.height())
         self.gauge.setGeometry(0, int(self.height() * 0.15), self.width(), int(self.height() * 0.85))
         self.label.setGeometry(0, int(self.height() * 0.78), self.width(), int(self.height() * 0.22))
     
-    """
     def paintEvent(self, event: QPaintEvent) -> None:
         image = QImage()
         image.load("server/resource/cpu_gauge.jpg")
@@ -45,5 +39,5 @@ class CpuGauge(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.drawImage(0, 0, image.scaled(self.width(), self.height(), transformMode=Qt.TransformationMode.SmoothTransformation))
         painter.end()
+        
         return super().paintEvent(event)
-    """
