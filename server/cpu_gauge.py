@@ -33,6 +33,7 @@ class CpuGauge(QWidget):
         self.repaint()
     
     def resize(self):
+        self.label_background.setGeometry(0, 0, self.width(), self.height())
         self.gauge.setGeometry(0, int(self.height() * 0.15), self.width(), int(self.height() * 0.85))
         self.label.setGeometry(0, int(self.height() * 0.78), self.width(), int(self.height() * 0.22))
     
