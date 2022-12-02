@@ -12,10 +12,10 @@ class NetworkPanel(QWidget):
         grid = QGridLayout()
         grid.setContentsMargins(0, 0, 0, 0)
         
-        grid.addWidget(GuiHelper.create_label(None, text="Down"), 0, 0)
-        grid.addWidget(GuiHelper.create_label(None, text="Up"), 1, 0)
-        self.label_net_down = GuiHelper.create_label(None, text="0")
-        self.label_net_up = GuiHelper.create_label(None, text="0")
+        grid.addWidget(GuiHelper.create_label(text="Down"), 0, 0)
+        grid.addWidget(GuiHelper.create_label(text="Up"), 1, 0)
+        self.label_net_down = GuiHelper.create_label(text="0")
+        self.label_net_up = GuiHelper.create_label(text="0")
 
         grid.addWidget(self.label_net_down, 0, 1, Qt.AlignmentFlag.AlignRight)
         grid.addWidget(self.label_net_up, 1, 1, Qt.AlignmentFlag.AlignRight)

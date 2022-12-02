@@ -1,5 +1,8 @@
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QPushButton, QWidget
+from typing import Union
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import QLabel, QPushButton, QToolButton, QWidget
 
 from server.analoggaugewidget import AnalogGaugeWidget 
 from server.gradiant_progressbar import GradiantProgressBar
@@ -25,12 +28,10 @@ class GuiHelper():
         gauge.set_DisplayValueColor(0, 255, 255)
         return gauge
 
-    def create_label(parent, x=None, y=None, width=None, height=None, text="", image=None, font_size=15, color="#FFFFFF") -> QLabel:
+    def create_label(parent=None, x=None, y=None, width=None, height=None, text="", image=None, font_size=15, color="#FFFFFF") -> QLabel:
         label = QLabel(parent)
         label.setText(text)
-        font = QFont("Decorative", font_size)
-        font.setBold(True)
-        label.setFont(font)
+        label.setFont(GuiHelper.__get_font(font_size))
         label.setStyleSheet("color: %s;" % color)
 
         if image is not None:
@@ -50,9 +51,15 @@ class GuiHelper():
 
         return progress
     
-    def create_button(parent, x=None, y=None, width=None, height=None, image=None, click=None, press=None, release=None, checkable=False):
-        button = QPushButton(parent)
+    def create_button(parent=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[QPushButton, QToolButton]=QPushButton, font_size=15) -> Union[QPushButton, QToolButton]:
+        button = button_type(parent)
         button.setCheckable(checkable)
+        
+        GuiHelper.__set_size(button, x, y, width, height)
+
+        if text is not None:
+            button.setText(text)
+            button.setFont(GuiHelper.__get_font(font_size))
 
         if image is not None:
             if checkable:
@@ -61,7 +68,11 @@ class GuiHelper():
                     + "QPushButton:checked {border-image: url(server/resource/" + pressed_image + ");}"
                 button.setStyleSheet(stre)
             else:
-                button.setStyleSheet("border-image: url(server/resource/" + image + ");")
+                if button_type == QPushButton:
+                    button.setStyleSheet("border-image: url(server/resource/" + image + ");")
+                elif button_type == QToolButton:
+                    button.setIcon(QIcon("server/resource/" + image))
+                    button.setIconSize(button.size())
         
         if click is not None:
             button.clicked.connect(click)
@@ -70,9 +81,12 @@ class GuiHelper():
         if release is not None:
             button.released.connect(release)
 
-        GuiHelper.__set_size(button, x, y, width, height)
+        if button_type == QPushButton:
+            button.setFlat(True)
+        elif button_type == QToolButton:
+            button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+            button.setStyleSheet("border: none;")
 
-        button.setFlat(True)
         return button
 
     def __set_size(widget:QWidget, x=None, y=None, width=None, height=None) -> None:
@@ -86,3 +100,8 @@ class GuiHelper():
             widget.setFixedWidth(width)
         elif width is None and height is not None and (x is None or y is  None):
             widget.setFixedHeight(height)
+    
+    def __get_font(font_size) -> QFont:
+        font = QFont("Decorative", font_size)
+        font.setBold(True)
+        return font

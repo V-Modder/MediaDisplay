@@ -16,7 +16,7 @@ class CpuGauge(QWidget):
 
         self.gauge = GuiHelper.create_gauge(self)
         
-        self.label = GuiHelper.create_label(self, None, None, None, None, text="--°C", color="#00FFFF")
+        self.label = GuiHelper.create_label(self, text="--°C", color="#00FFFF")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
     def set_value(self, value: CPU):

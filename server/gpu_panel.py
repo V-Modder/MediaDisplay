@@ -14,8 +14,8 @@ class GpuPanel(QWidget):
         grid = QGridLayout()
         grid.setContentsMargins(0, 0, 0, 0)
 
-        self.label_gpu = GuiHelper.create_label(None, text="GPU", font_size=20)
-        self.label_gpu_temp = GuiHelper.create_label(None, width=50, height=25, text="--°C")
+        self.label_gpu = GuiHelper.create_label(text="GPU", font_size=20)
+        self.label_gpu_temp = GuiHelper.create_label(width=50, height=25, text="--°C")
         self.progress_gpu_load = GuiHelper.create_progressbar(height=15)
         self.progress_gpu_mem_load = GuiHelper.create_progressbar(height=15)
 

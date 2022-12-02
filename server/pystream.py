@@ -3,9 +3,9 @@ import platform
 import pyautogui
 import sys
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime, QSize
+from PyQt5.QtGui import QIcon, QCloseEvent, QFont
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget, QHBoxLayout, QToolButton
 
 from rpi_backlight import Backlight
 from rpi_backlight.utils import FakeBacklightSysfs
@@ -93,9 +93,9 @@ class PyStream(QMainWindow):
         self.network_panel.setGeometry(280, 395, 250, 51)
 
         GuiHelper.create_label(self.panel_1, 551, 390, text="Memory", font_size=18)
-        self.progress_mem_load = GuiHelper.create_progressbar(self.panel_1, 551, 421, 203, 20)
+        self.progress_mem_load = GuiHelper.create_progressbar(parent=self.panel_1, x=551, y=421, width=203, height=20)
         
-        self.btn_right = GuiHelper.create_button(self.panel_1, 774, 227, 26, 26, "arrow_right.png", lambda:self.__change_page("Forward"))
+        self.btn_right = GuiHelper.create_button(parent=self.panel_1, x=774, y=227, width=26, height=26, image="arrow_right.png", press=lambda:self.__change_page("Forward"))
 
         #####################
         ##### Panel 2
@@ -103,13 +103,19 @@ class PyStream(QMainWindow):
         background_2.setGeometry(0, 0, 800, 480)
         background_2.setStyleSheet("background-image: url(server/resource/page_2.jpg);")
 
-        GuiHelper.create_button(self.panel_2, 125, 180, 100, 120, "desk_lamp.png", lambda:self.__relay.toggle_relay(PyRelay.BIG_2), checkable=True)
-        GuiHelper.create_button(self.panel_2, 350, 180, 100, 120, "keyboard.png", press=lambda:self.__relay.activate_relay(PyRelay.SMALL_1), release=lambda:self.__relay.deactivate_relay(PyRelay.SMALL_1))
-        self.label_active_usb = GuiHelper.create_label(self.panel_2, 350, 280, width=100, height=25, text="1")
-        self.label_active_usb.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        GuiHelper.create_button(self.panel_2, 575, 180, 100, 120, "laptop.png", lambda:self.__relay.toggle_relay(PyRelay.BIG_1), checkable=True)
-        
-        self.btn_left = GuiHelper.create_button(self.panel_2, 0, 227, 26, 26, "arrow_left.png", lambda:self.__change_page("Backward"))
+        grid = QHBoxLayout()
+        grid.addStretch()
+        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="desk_lamp.png", click=lambda:self.__relay.toggle_relay(PyRelay.BIG_2), checkable=True))
+        grid.addStretch()
+        self.button_change_usb = GuiHelper.create_button(width=100, height=140, text="1", image="keyboard.png", press=lambda:self.__relay.activate_relay(PyRelay.SMALL_1), release=lambda:self.__relay.deactivate_relay(PyRelay.SMALL_1), button_type=QToolButton)
+        grid.addWidget(self.button_change_usb)
+        grid.addStretch()
+        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="laptop.png", click=lambda:self.__relay.toggle_relay(PyRelay.BIG_1), checkable=True))
+        grid.addStretch()
+
+        self.panel_2.setLayout(grid)
+
+        self.btn_left = GuiHelper.create_button(parent=self.panel_2, x=0, y=227, width=26, height=26, image="arrow_left.png", press=lambda:self.__change_page("Backward"))
         #####################
 
         self.label_room_temp = GuiHelper.create_label(self, 97, 0, width=137, height=30, text="--°C")
@@ -135,7 +141,7 @@ class PyStream(QMainWindow):
 
         self.label_time.setText(timeDisplay)
         self.label_room_temp.setText("%1.0f°C" % temp)
-        self.label_active_usb.setText(active_usb)
+        self.button_change_usb.setText(active_usb)
 
     def __change_page(self, direction):
         if direction == "Forward":
