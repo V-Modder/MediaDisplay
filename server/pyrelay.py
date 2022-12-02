@@ -31,6 +31,7 @@ try:
     import RPi.GPIO as GPIO
     class PyRelay(PyRelayBase):
         def __init__(self):
+            super().__init__()
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(self.SMALL_1, GPIO.OUT)
             GPIO.setup(self.SMALL_2, GPIO.OUT, initial=GPIO.HIGH)
