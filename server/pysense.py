@@ -13,7 +13,7 @@ try:
             GPIO.setup(self.INPUT_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.INPUT_2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        def check_state(self, input_pin):
+        def check_state(self, input_pin) -> bool:
             return GPIO.input(input_pin) == 0
 except:
     print("RPi.GPIO couldn't be imported, using dummy sense")
