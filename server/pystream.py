@@ -96,7 +96,7 @@ class PyStream(QMainWindow):
         GuiHelper.create_label(self.panel_1, 551, 390, text="Memory", font_size=18)
         self.progress_mem_load = GuiHelper.create_progressbar(parent=self.panel_1, x=551, y=421, width=203, height=20)
         
-        self.btn_right = GuiHelper.create_button(parent=self.panel_1, x=774, y=190, width=26, height=100, image="arrow_right.png", press=lambda:self.__change_page("Forward"))
+        self.btn_right = GuiHelper.create_button(parent=self.panel_1, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page("Forward"))
 
         #####################
         ##### Panel 2
@@ -116,7 +116,7 @@ class PyStream(QMainWindow):
 
         self.panel_2.setLayout(grid)
 
-        self.btn_left = GuiHelper.create_button(parent=self.panel_2, x=0, y=190, width=26, height=100, image="arrow_left.png", press=lambda:self.__change_page("Backward"))
+        self.btn_left = GuiHelper.create_button(parent=self.panel_2, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page("Backward"))
         #####################
 
         self.label_room_temp = GuiHelper.create_label(self, 97, 0, width=137, height=30, text="--°C")
