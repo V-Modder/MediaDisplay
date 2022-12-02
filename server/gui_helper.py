@@ -51,7 +51,7 @@ class GuiHelper():
 
         return progress
     
-    def create_button(parent=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[QPushButton, QToolButton]=QPushButton, font_size=15) -> Union[QPushButton, QToolButton]:
+    def create_button(parent=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[QPushButton, QToolButton]=QPushButton, font_size=15, color="#FFFFFF") -> Union[QPushButton, QToolButton]:
         button = button_type(parent)
         button.setCheckable(checkable)
         
@@ -85,7 +85,7 @@ class GuiHelper():
             button.setFlat(True)
         elif button_type == QToolButton:
             button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-            button.setStyleSheet("border: none;")
+            button.setStyleSheet("border: none; color: %s;" % color)
 
         return button
 
