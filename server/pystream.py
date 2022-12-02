@@ -228,9 +228,9 @@ class PyStream(QMainWindow):
             step = 1
             if pyautogui.position().x <= disp.screen()["height_in_pixels"]:
                 step = -1
-            pyautogui.moveRel(0, step)
+            pyautogui.moveRel(step, 0)
             time.sleep(0.5)
-            pyautogui.moveRel(0, -step)
+            pyautogui.moveRel(-step, 0)
 
     def enable_screensaver(self):
         if self.is_raspberry_pi():
