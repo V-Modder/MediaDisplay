@@ -1,17 +1,28 @@
+import time
+
 class PyRelayBase:
     SMALL_1 = 19
     SMALL_2 = 26
     BIG_1 = 6
     BIG_2 = 13
 
+    def __init__(self) -> None:
+        self.activasion = {}
+
     def _validate_input(self, input):
         return input in [self.SMALL_1, self.SMALL_2, self.BIG_1, self.BIG_2]
     
     def activate_relay(self, relay_number):
-        pass
+        self.activasion[relay_number] = time.time()
+        print("an")
 
     def deactivate_relay(self, relay_number):
-        pass
+        if relay_number in self.activasion:
+            pressed_time = time.time() - self.activasion[relay_number]
+            if pressed_time < 0.5:
+                time.sleep(0.5 - pressed_time)
+            self.activasion.pop(relay_number)
+            print("aus")
     
     def toggle_relay(self, relay_number):
         pass
@@ -32,6 +43,7 @@ try:
                 if relay_number in [self.SMALL_1, self.SMALL_2]:
                     state = GPIO.LOW
                 GPIO.output(relay_number, state)
+                super().activate_relay(relay_number)
 
         def deactivate_relay(self, relay_number):
             if self._validate_input(relay_number):
@@ -39,6 +51,7 @@ try:
                 if relay_number in [self.SMALL_1, self.SMALL_2]:
                     state = GPIO.HIGH
                 GPIO.output(relay_number, state)
+                super().deactivate_relay(relay_number)
         
         def toggle_relay(self, relay_number):
             if not self._validate_input(relay_number):
@@ -48,4 +61,5 @@ try:
 except:
     print("RPi.GPIO couldn't be imported, using dummy relay")
     class PyRelay(PyRelayBase):
-        pass
+        def __init__(self) -> None:
+            super().__init__()
