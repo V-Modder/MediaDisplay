@@ -2,6 +2,7 @@ import logging
 import platform
 import pyautogui
 import sys
+import time
 
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime, QSize
 from PyQt5.QtGui import QIcon, QCloseEvent, QFont
@@ -228,6 +229,7 @@ class PyStream(QMainWindow):
             if pyautogui.position().x <= disp.screen()["height_in_pixels"]:
                 step = -1
             pyautogui.moveRel(0, step)
+            time.sleep(0.5)
             pyautogui.moveRel(0, -step)
 
     def enable_screensaver(self):
