@@ -227,7 +227,7 @@ class PyStream(QMainWindow):
             disp.sync()
             step = 1
             if pyautogui.position().x <= disp.screen()["height_in_pixels"]:
-                step = -1
+                step *= -1
             pyautogui.moveRel(step, 0)
             time.sleep(0.5)
             pyautogui.moveRel(-step, 0)
