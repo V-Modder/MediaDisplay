@@ -32,25 +32,25 @@ class MetricServer(Namespace, Thread):
     def on_connect(self):
         print("socket connected, ", request.sid)
         print("Headers:", request.headers["Cpu-Count"])
-        if len(self._connected_clients) > 0:
-            self.disconnect()
-        else:
-            self._connected_clients.append(request.sid)
-            try:
-                self.__receiver.restore(int(request.headers["Cpu-Count"]))
-            except Exception as e:
-                traceback.print_exc()
+        #if len(self._connected_clients) > 0:
+        #    self.disconnect()
+        #else:
+        self._connected_clients.append(request.sid)
+        try:
+            self.__receiver.restore(int(request.headers["Cpu-Count"]))
+        except Exception as e:
+            traceback.print_exc()
 
     def on_disconnect(self):
         print("socket disconnected")
-        if request.sid in self._connected_clients:    
-            print("Disconnecting, already in use")
-            self._connected_clients.remove(request.sid)
-        else:
-            try:
-                self.__receiver.reset()
-            except Exception as e:
-                traceback.print_exc()
+        #if request.sid in self._connected_clients:    
+        #    print("Disconnecting, already in use")
+        #    self._connected_clients.remove(request.sid)
+        #else:
+        try:
+            self.__receiver.reset()
+        except Exception as e:
+            traceback.print_exc()
 
     def on_get_brightness(self):
         print('received get_brightness: ')
