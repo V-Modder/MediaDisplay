@@ -3,9 +3,9 @@
   become: yes
   become_user: "pi"
   git:
-    repo: https://github.com/V-Modder/MediaDisplay
+    repo: "github.com:V-Modder/MediaDisplay.git"
     dest: "/home/pi/projects/MediaDisplay"
-  when: not MediaDisplay.stat.exists
+    version: socketio
 
 - name: Add autostart
   lineinfile:

@@ -1,11 +1,12 @@
 ---
 - name: Deploy ssh config
   copy:
-    src: .ssh
+    src: .ssh/
     dest: "/home/{{ item }}/.ssh/"
     owner: "{{ item }}"
     group: "{{ item }}"
     directory_mode: 0600
+    force: "true"
   with_items: "pi"
 
 - name: Deploy boot config output pins
@@ -41,7 +42,34 @@
     dest: "/etc/udev/rules.d/"
     owner: "root"
     group: "root"
-    directory_mode: 0600"
+    directory_mode: 0600
+  notify:
+      - Reboot
+
+- name: Deploy X config noblank
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/xdg/lxsession/LXDE-pi/autostart
+    line: "@xset s noblank"
+  notify:
+      - Reboot
+
+- name: Deploy X config screensaver off
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/xdg/lxsession/LXDE-pi/autostart
+    line: "@xset s off"
+  notify:
+      - Reboot
+
+- name: Deploy X config energy start feature off
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/xdg/lxsession/LXDE-pi/autostart
+    line: "@xset -dpms"
   notify:
       - Reboot
 
