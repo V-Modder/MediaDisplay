@@ -4,7 +4,7 @@ import pyautogui
 import sys
 import time
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime, QSize
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
 from PyQt5.QtGui import QIcon, QCloseEvent, QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget, QHBoxLayout, QToolButton
 
