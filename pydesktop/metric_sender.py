@@ -14,12 +14,12 @@ class MetricSender(ClientNamespace):
     __client_thread : Thread
     __run_connecting : bool
     __run_sending : bool
-    __conf : Config
+    conf : Config
     __metric_builder : MetricBuilder
 
     def __init__(self, conf : Config) -> None:
         super().__init__(None)
-        self.__conf = conf
+        self.conf = conf
         socket = Client(reconnection_attempts=20)
         socket.register_namespace(self)
         self.__sending_thread = Thread(target=self.run_sending)
@@ -88,7 +88,7 @@ class MetricSender(ClientNamespace):
     def run_client(self):
         while self.__run_connecting:
             try:
-                self.client.connect(self.__conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
+                self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
                 self.client.wait()
             except Exception:
                 traceback.print_exc()
@@ -99,7 +99,7 @@ class MetricSender(ClientNamespace):
 
     def change_conf(self, conf : Config):
         try:
-            self.__conf = conf
+            self.conf = conf
             self.stop()
             self.start()
         except Exception:

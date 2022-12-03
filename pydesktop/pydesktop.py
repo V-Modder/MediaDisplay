@@ -1,5 +1,6 @@
 import sys
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
@@ -15,11 +16,14 @@ class PyDesktop:
         self.app.setQuitOnLastWindowClosed(False)
         self.window = None
 
-    def show(self):
-        if self.window is None:
-            self.window = PyDesktopConfig(self.sender)
-            self.window.closeEvent = self.closeEvent
-            self.window.show()
+    def show(self, reason=0):
+        if reason != QSystemTrayIcon.ActivationReason.Context:
+            if self.window is None:
+                self.window = PyDesktopConfig(self.sender)
+                self.window.closeEvent = self.closeEvent
+                self.window.show()
+        else:
+            pass
 
     def closeEvent(self, event):
         self.window = None
