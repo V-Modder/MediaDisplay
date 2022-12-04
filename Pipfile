@@ -22,6 +22,8 @@ gunicorn = "*"
 rpi_backlight = "*"
 Xlib = "*"
 pyautogui = "*"
+jsonpickle = "*"
+pythonnet = "*"
 
 [requires]
 python_version = "3.10.6"
