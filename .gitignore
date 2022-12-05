@@ -344,3 +344,4 @@ build/*
 *.spec
 config.json
 metric/OpenHardwareMonitorLib.sys
+dist
