@@ -11,9 +11,11 @@ def main():
 	
 	logging.basicConfig(
 		level=logging.INFO,
-		format=log_format,
-		handlers=[rotatingHandler]
+		format=log_format
   	)
+
+	logging.getLogger('').addHandler(rotatingHandler)
+
 	desk = PyDesktop()
 	desk.main()
 
