@@ -5,7 +5,10 @@
 #
 # Sorry for mixing english & german notes
 
+import logging
 import math
+
+logger = logging.getLogger(__name__)
 
 # pyright: reportMissingImports=false,
 try:
@@ -16,8 +19,8 @@ try:
     from PyQt4.QtCore import QObject, pyqtSignal
 
     used_Qt_Version = 4
-    print("end trying to import Qt4 @ analoggaugewidget.py")
-    print("ToDo: Fix error output QPainter.Antialiasing")
+    logger.info("end trying to import Qt4 @ analoggaugewidget.py")
+    logger.info("ToDo: Fix error output QPainter.Antialiasing")
 except:
     try:
         from PyQt5.QtWidgets import QWidget
@@ -27,7 +30,7 @@ except:
         from PyQt5.QtCore import QObject, pyqtSignal
 
         used_Qt_Version = 5
-        print("end trying to import Qt5 @ analoggaugewidget.py")
+        logger.info("end trying to import Qt5 @ analoggaugewidget.py")
     except:
         try:
             from PyQt6.QtWidgets import QWidget
@@ -37,9 +40,9 @@ except:
             from PyQt6.QtCore import QObject, pyqtSignal
 
             used_Qt_Version = 6
-            print("end trying to import Qt6 @ analoggaugewidget.py")
+            logger.info("end trying to import Qt6 @ analoggaugewidget.py")
         except:
-            print("Error Import Qt 4, 5, 6 @ analoggaugewidget.py")
+            logger.info("Error Import Qt 4, 5, 6 @ analoggaugewidget.py")
             exit()
 
 class AnalogGaugeWidget(QWidget):

@@ -1,4 +1,7 @@
+import logging
 import time
+
+logger = logging.getLogger(__name__)
 
 class PyRelayBase:
     SMALL_1 = 19
@@ -14,7 +17,7 @@ class PyRelayBase:
     
     def activate_relay(self, relay_number):
         self.activasion[relay_number] = time.time()
-        print("an")
+        logger.info("an")
 
     def deactivate_relay(self, relay_number):
         if relay_number in self.activasion:
@@ -22,7 +25,7 @@ class PyRelayBase:
             if pressed_time < 0.5:
                 time.sleep(0.5 - pressed_time)
             self.activasion.pop(relay_number)
-            print("aus")
+            logger.info("aus")
     
     def toggle_relay(self, relay_number):
         pass
@@ -60,7 +63,7 @@ try:
 
             GPIO.output(relay_number, not GPIO.input(relay_number))
 except:
-    print("RPi.GPIO couldn't be imported, using dummy relay")
+    logger.info("RPi.GPIO couldn't be imported, using dummy relay")
     class PyRelay(PyRelayBase):
         def __init__(self) -> None:
             super().__init__()

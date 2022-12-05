@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 class PySenseBase:
     INPUT_1 = 24
     INPUT_2 = 23
@@ -16,7 +20,7 @@ try:
         def check_state(self, input_pin) -> bool:
             return GPIO.input(input_pin) == 0
 except:
-    print("RPi.GPIO couldn't be imported, using dummy sense")
+    logger.info("RPi.GPIO couldn't be imported, using dummy sense")
     import random
     class PySense(PySenseBase):
         def check_state(self, input_pin) -> bool:

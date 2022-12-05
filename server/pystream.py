@@ -24,6 +24,8 @@ from server.pytemp import PyTemp
 from server.pyrelay import PyRelay
 from server.server import MetricServer
 
+logger = logging.getLogger(__name__)
+
 def main():
     app = QApplication(sys.argv)
     global window 
@@ -58,7 +60,7 @@ class PyStream(QMainWindow):
         self.enable_screensaver()
 
     def initUI(self):
-        logging.info("[GUI] Init main frame")
+        logger.info("[GUI] Init main frame")
         if self.is_raspberry_pi():
             self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
             self.setGeometry(0, 0, 800, 480)
@@ -125,7 +127,7 @@ class PyStream(QMainWindow):
         self.label_time.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
         self.restore_gui()
-        logging.info("[GUI] Init done")
+        logger.info("[GUI] Init done")
         self.timer.start(1000)
         self.receive_signal.connect(self.receive_gui)
         self.reinit_signal.connect(self.reinit_gui)
@@ -177,11 +179,11 @@ class PyStream(QMainWindow):
             try:
                 self.udpate_gui(data)
             except Exception as e:
-                print(e)
+                logger.error(e)
             finally:
                 self.is_updating = False
         else: 
-            print("Gui is locked")
+            logger.error("Gui is locked")
 
     def receive(self, data:Metric):
         self.receive_signal.emit(data)
@@ -195,7 +197,7 @@ class PyStream(QMainWindow):
         self.reinit_signal.emit(cpu_count)
 
     def reset(self):
-        logging.info("[GUI] Restoring initial image")
+        logger.info("[GUI] Restoring initial image")
         self.restore_gui()
         self.enable_screensaver()
         self.cpu_panel.clear()

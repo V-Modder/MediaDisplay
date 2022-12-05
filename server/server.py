@@ -1,12 +1,14 @@
 import eventlet
 import eventlet.wsgi
 from flask import Flask, request
-from flask_socketio import SocketIO, Namespace
+from flask_socketio import SocketIO, Namespace#
+import logging
 from threading import Thread
-import traceback
 import typing
 
 from metric.metric import Metric
+
+logger = logging.getLogger(__name__)
 
 class MetricServer(Namespace, Thread):
     _app : Flask
@@ -22,7 +24,7 @@ class MetricServer(Namespace, Thread):
         self._connected_clients = []
 
     def run(self):
-        print("Starting server at 0.0.0.0:5001")
+        logger.info("Starting server at 0.0.0.0:5001")
         self.socketio.run(self.__app, host="0.0.0.0", port=5001)
 
     def stop(self):
@@ -30,8 +32,8 @@ class MetricServer(Namespace, Thread):
         eventlet.kill(Exception())
 
     def on_connect(self):
-        print("socket connected, ", request.sid)
-        print("Headers:", request.headers["Cpu-Count"])
+        logger.info("socket connected, ", request.sid)
+        logger.debug("Headers:", request.headers)
         #if len(self._connected_clients) > 0:
         #    self.disconnect()
         #else:
@@ -39,38 +41,39 @@ class MetricServer(Namespace, Thread):
         try:
             self.__receiver.restore(int(request.headers["Cpu-Count"]))
         except Exception as e:
-            traceback.print_exc()
+            logger.error("Error connecting", exc_info=True)
 
     def on_disconnect(self):
-        print("socket disconnected")
+        logger.info("socket disconnected")
         #if request.sid in self._connected_clients:    
-        #    print("Disconnecting, already in use")
+        #    logger.info("Disconnecting, already in use")
         #    self._connected_clients.remove(request.sid)
         #else:
         try:
             self.__receiver.reset()
         except Exception as e:
-            traceback.print_exc()
+            logger.error("Error disconnecting", exc_info=True)
 
     def on_get_brightness(self):
-        print('received get_brightness: ')
+        logger.info('Received get_brightness: ')
         value = 0
         try:
             value = self.__receiver.get_brightness()
         except Exception as e:
-            traceback.print_exc()
+            logger.error("Error getting brightness", exc_info=True)
         self.emit('receive_brightness', value)
 
     def on_set_brightness(self, message):
-        print('received set_brightness: ', message)
+        logger.info('Received set_brightness: ', message)
         try:
             self.__receiver.set_brightness(message)
         except Exception as e:
-            traceback.print_exc()
+            logger.error("Error setting brightness", exc_info=True)
 
     def on_metric(self, message):
+        logger.debug('Received Metric')
         try:
             metric = Metric.deserialize(message)
             self.__receiver.receive(metric)
         except Exception as e:
-            traceback.print_exc()
+            logger.error("Error receiving metric", exc_info=True)

@@ -1,13 +1,15 @@
+import logging
 from socketio import Client, ClientNamespace
 from threading import Thread
 from time import sleep
-import traceback
 
 from metric.metric import Metric
 from metric.metric_builder import MetricBuilder
 from pydesktop.config import Config
 from pydesktop.connection_status import ConnectionStatus
 #from pydesktop.pydesktop import PyDesktop
+
+logger = logging.getLogger(__name__)
 
 class MetricSender(ClientNamespace):
     __sending_thread : Thread
@@ -45,22 +47,22 @@ class MetricSender(ClientNamespace):
         if not self.__sending_thread.is_alive():
             self.__sending_thread.start()
         else:
-            print("problem")
-        print('connection established')
+            logger.error("Thread is already running")
+        logger.info('connection established')
 
     def on_disconnect(self):
         self.__run_sending = False
         self.__sending_thread.join()
         self.__sending_thread = Thread(target=self.run_sending)
-        print('disconnected from server')
+        logger.info('disconnected from server')
 
     def on_receive_brightness(self, data):
-        print('receive_brightness received with ', data)
+        logger.info('receive_brightness received with ', data)
         try:
             if self.__listener is not None:            
                 self.__listener.brightness_received(data)
-        except Exception:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error("Error receiving brightness", exc_info=True)
 
     def change_brightness(self, brightness):
         if self.client.connected:
@@ -82,16 +84,16 @@ class MetricSender(ClientNamespace):
                         self.call("metric", metric.serialize(), timeout=3)
                 else:
                     sleep(0.5)
-            except Exception:
-                traceback.print_exc()
+            except Exception as e:
+                logger.error("Error receiving brightness", exc_info=True)
 
     def run_client(self):
         while self.__run_connecting:
             try:
                 self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
                 self.client.wait()
-            except Exception:
-                traceback.print_exc()
+            except Exception as e:
+                logger.error("Error receiving brightness", exc_info=True)
                 sleep(0.5)
 
     def set_listener(self, listener):
@@ -102,8 +104,8 @@ class MetricSender(ClientNamespace):
             self.conf = conf
             self.stop()
             self.start()
-        except Exception:
-            traceback.print_exc()
+        except Exception as e:
+            logger.error("Error receiving brightness", exc_info=True)
     
     def get_status(self) -> ConnectionStatus:
         if not self.__run_connecting:
