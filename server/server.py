@@ -32,12 +32,12 @@ class MetricServer(Namespace, Thread):
         eventlet.kill(Exception())
 
     def on_connect(self):
-        logger.info("socket connected, ", request.sid)
-        logger.debug("Headers:", request.headers)
+        logger.info("socket connected, " + request.sid)
+        logger.debug("Headers:" + request.headers)
         #if len(self._connected_clients) > 0:
         #    self.disconnect()
         #else:
-        self._connected_clients.append(request.sid)
+        #self._connected_clients.append(request.sid)
         try:
             self.__receiver.restore(int(request.headers["Cpu-Count"]))
         except Exception as e:
@@ -64,7 +64,7 @@ class MetricServer(Namespace, Thread):
         self.emit('receive_brightness', value)
 
     def on_set_brightness(self, message):
-        logger.info('Received set_brightness: ', message)
+        logger.info('Received set_brightness: '+ message)
         try:
             self.__receiver.set_brightness(message)
         except Exception as e:

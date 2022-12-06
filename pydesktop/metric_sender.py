@@ -90,7 +90,7 @@ class MetricSender(ClientNamespace):
     def run_client(self):
         while self.__run_connecting:
             try:
-                self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())})
+                self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())}, transports="websocket")
                 self.client.wait()
             except Exception as e:
                 logger.error("Error receiving brightness", exc_info=True)

@@ -1,6 +1,6 @@
 import logging
 import platform
-import pyautogui
+#import pyautogui
 import sys
 import time
 
@@ -8,11 +8,11 @@ from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
 from PyQt5.QtGui import QIcon, QCloseEvent, QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget, QHBoxLayout, QToolButton
 
-from rpi_backlight import Backlight
-from rpi_backlight.utils import FakeBacklightSysfs
+#from rpi_backlight import Backlight
+#from rpi_backlight.utils import FakeBacklightSysfs
 
-from Xlib import X
-from Xlib import display
+#from Xlib import X
+#from Xlib import display
 
 from metric.metric import Metric 
 from server.cpu_panel import CpuPanel
@@ -49,12 +49,12 @@ class PyStream(QMainWindow):
         self.timer = QTimer()
         self.timer.timeout.connect(self.__timer_tick)
     
-        try:
-            self.backlight = Backlight()
-        except:
-            self.fakeBacklightSysfs = FakeBacklightSysfs()
-            self.fakeBacklightSysfs.__enter__()
-            self.backlight = Backlight(backlight_sysfs_path=self.fakeBacklightSysfs.path)
+        #try:
+        #    self.backlight = Backlight()
+        #except:
+        #    self.fakeBacklightSysfs = FakeBacklightSysfs()
+        #    self.fakeBacklightSysfs.__enter__()
+        #    self.backlight = Backlight(backlight_sysfs_path=self.fakeBacklightSysfs.path)
         
         self.initUI()
         self.enable_screensaver()
@@ -204,11 +204,12 @@ class PyStream(QMainWindow):
         self.gpu_panel.show_gui(False)
 
     def set_brightness(self, brightness):
-        if brightness is not None and brightness >= 0 and brightness <= 100:
-            self.backlight.brightness = brightness
+        #if brightness is not None and brightness >= 0 and brightness <= 100:
+        #    self.backlight.brightness = brightness
+        pass
 
     def get_brightness(self):
-        return self.backlight.brightness
+        return 50
 
     def enable_gui(self):
         self.stack.setCurrentIndex(self.__stats_tab_index)
@@ -228,11 +229,11 @@ class PyStream(QMainWindow):
             disp.set_screen_saver(0, 0, X.DontPreferBlanking, X.AllowExposures)
             disp.sync()
             step = 1
-            if pyautogui.position().x <= disp.screen()["height_in_pixels"]:
-                step *= -1
-            pyautogui.moveRel(step, 0)
-            time.sleep(0.5)
-            pyautogui.moveRel(-step, 0)
+            #if pyautogui.position().x <= disp.screen()["height_in_pixels"]:
+            #    step *= -1
+            #pyautogui.moveRel(step, 0)
+            #time.sleep(0.5)
+            #pyautogui.moveRel(-step, 0)
 
     def enable_screensaver(self):
         if self.is_raspberry_pi():
