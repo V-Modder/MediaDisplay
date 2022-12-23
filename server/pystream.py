@@ -8,13 +8,11 @@ from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
 from PyQt5.QtGui import QIcon, QCloseEvent, QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget, QHBoxLayout, QToolButton
 
-from rpi_backlight import Backlight
-from rpi_backlight.utils import FakeBacklightSysfs
-
 from Xlib import X
 from Xlib import display
 
 from metric.metric import Metric 
+from server.backlight_controller import BacklightController
 from server.cpu_panel import CpuPanel
 from server.gpu_panel import GpuPanel
 from server.gui_helper import GuiHelper
@@ -48,13 +46,7 @@ class PyStream(QMainWindow):
         self.__buttons_tab_index = 1
         self.timer = QTimer()
         self.timer.timeout.connect(self.__timer_tick)
-    
-        try:
-            self.backlight = Backlight()
-        except:
-            self.fakeBacklightSysfs = FakeBacklightSysfs()
-            self.fakeBacklightSysfs.__enter__()
-            self.backlight = Backlight(backlight_sysfs_path=self.fakeBacklightSysfs.path)
+        self.backlight = BacklightController()
         
         self.initUI()
         self.enable_screensaver()
@@ -189,11 +181,15 @@ class PyStream(QMainWindow):
         self.receive_signal.emit(data)
 
     def reinit_gui(self, data:int):
-        self.cpu_panel.create_cpus(data)
+        try:
+            self.cpu_panel.create_cpus(data)
+            self.enable_gui()
+        except Exception as e:
+            self.cpu_panel.clear()
+            raise e
 
     def restore(self, cpu_count:int):
         self.disable_screensaver()
-        self.enable_gui()
         self.reinit_signal.emit(cpu_count)
 
     def reset(self):
@@ -204,11 +200,10 @@ class PyStream(QMainWindow):
         self.gpu_panel.show_gui(False)
 
     def set_brightness(self, brightness):
-        if brightness is not None and brightness >= 0 and brightness <= 100:
-            self.backlight.brightness = brightness
+        self.backlight.set_brightness(brightness)
 
     def get_brightness(self):
-        return self.backlight.brightness
+        return self.backlight.get_brightness()
 
     def enable_gui(self):
         self.stack.setCurrentIndex(self.__stats_tab_index)
