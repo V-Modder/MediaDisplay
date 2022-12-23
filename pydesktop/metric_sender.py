@@ -42,7 +42,6 @@ class MetricSender(ClientNamespace):
         self.client.disconnect()
 
     def on_connect(self):
-        self.get_brightness()
         self.__run_sending = True
         if not self.__sending_thread.is_alive():
             self.__sending_thread.start()
@@ -85,7 +84,7 @@ class MetricSender(ClientNamespace):
                 else:
                     sleep(0.5)
             except Exception as e:
-                logger.error("Error receiving brightness", exc_info=True)
+                logger.error("Error sending metric", exc_info=True)
 
     def run_client(self):
         while self.__run_connecting:
@@ -93,7 +92,7 @@ class MetricSender(ClientNamespace):
                 self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())}, transports="websocket")
                 self.client.wait()
             except Exception as e:
-                logger.error("Error receiving brightness", exc_info=True)
+                logger.error("Error running client", exc_info=True)
                 sleep(0.5)
 
     def set_listener(self, listener):
@@ -105,7 +104,7 @@ class MetricSender(ClientNamespace):
             self.stop()
             self.start()
         except Exception as e:
-            logger.error("Error receiving brightness", exc_info=True)
+            logger.error("Error changing config", exc_info=True)
     
     def get_status(self) -> ConnectionStatus:
         if not self.__run_connecting:
