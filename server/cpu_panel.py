@@ -1,6 +1,6 @@
 from typing import List
 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
+from PyQt5.QtWidgets import QGridLayout, QWidget
 
 from server.cpu_gauge import CpuGauge
 
@@ -10,37 +10,37 @@ class CpuPanel(QWidget):
     def __init__(self, parent) -> None:
         super().__init__(parent)
 
-        layout = QVBoxLayout()
+        layout = QGridLayout()
         layout.setSpacing(8)
-        self.top_row = QHBoxLayout()
-        self.bottom_row = QHBoxLayout()
-        layout.addLayout(self.top_row)
-        layout.addLayout(self.bottom_row)
         self.setLayout(layout)
 
         self.cpus = []
 
-    def add(self, cpu: CpuGauge):
-        self.cpus.append(cpu)
-        if len(self.cpus) % 2 == 0:
-            self.bottom_row.addWidget(cpu)
-        else:
-            self.top_row.addWidget(cpu)
-
     def create_cpus(self, count: int):
+        square = self.__calc_square(count)
+        row = -1
         for i in range(0, count):
-            self.add(CpuGauge(None))
+            col = i % square
+            if col == 0:
+                row += 1
+            self.__add(CpuGauge(None), col, row)
 
     def clear(self):
-        i = 0
         for cpu in self.cpus:
-            if i % 2 == 0:
-                self.top_row.removeWidget(cpu)
-            else:
-                self.bottom_row.removeWidget(cpu)
-            i += 1
+            self.layout().removeWidget(cpu)
         
         self.cpus = []
 
     def update_value(self, index, value):
-        self.cpus[index].set_value(value)
+        if len(self.cpus) > index:
+            self.cpus[index].set_value(value)
+
+    def __add(self, cpu: CpuGauge, x:int, y:int):
+        self.cpus.append(cpu)
+        self.layout().addWidget(cpu, y, x)
+    
+    def __calc_square(self, n:int):
+        i=1
+        while(i ** 2 < n):
+            i += 1
+        return i
