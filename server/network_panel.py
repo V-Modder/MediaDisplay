@@ -16,16 +16,20 @@ class NetworkPanel(QWidget):
         
         #grid.addWidget(GuiHelper.create_label(text="Down"), 0, 0)
         #grid.addWidget(GuiHelper.create_label(text="Up"), 1, 0)
-        grid.addWidget(ArrowLabel(Qt.GlobalColor.green, Direction.DOWN), 0, 0)
-        grid.addWidget(ArrowLabel(Qt.GlobalColor.red, Direction.UP), 1, 0)
-        self.label_net_down = GuiHelper.create_label(text="0")
-        self.label_net_up = GuiHelper.create_label(text="0")
-
+        arrow_up = ArrowLabel(Qt.GlobalColor.green, Direction.DOWN)
+        arrow_up.setMaximumWidth(30)
+        arrow_down = ArrowLabel(Qt.GlobalColor.red, Direction.UP)
+        arrow_down.setMaximumWidth(30)
+        grid.addWidget(arrow_up, 0, 0)
+        grid.addWidget(arrow_down, 1, 0)
+        
+        self.label_net_down = GuiHelper.create_label(text="0B")
+        self.label_net_up = GuiHelper.create_label(text="0B")
         grid.addWidget(self.label_net_down, 0, 1, Qt.AlignmentFlag.AlignRight)
         grid.addWidget(self.label_net_up, 1, 1, Qt.AlignmentFlag.AlignRight)
 
         self.setLayout(grid)
-    
+        
     def update_values(self, network: Network) -> None:
         self.label_net_down.setText(network.get_down_str())
         self.label_net_up.setText(network.get_up_str())
