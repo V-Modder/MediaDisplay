@@ -5,8 +5,8 @@ import sys
 import time
 
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
-from PyQt5.QtGui import QIcon, QCloseEvent, QFont
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget, QHBoxLayout, QToolButton
+from PyQt5.QtGui import QIcon, QCloseEvent
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget, QHBoxLayout, QVBoxLayout, QToolButton
 
 from Xlib import X
 from Xlib import display
@@ -81,14 +81,27 @@ class PyStream(QMainWindow):
         self.cpu_panel = CpuPanel(self.panel_1)
         self.cpu_panel.setGeometry(26, 25, 748, 350)
 
-        self.gpu_panel = GpuPanel(self.panel_1)
-        self.gpu_panel.setGeometry(35, 390, 230, 50)
+        bottom_panel = QWidget(self.panel_1)
+        bottom_panel.setGeometry(35, 390, 230, 50)
+        bottom_panel_layout = QHBoxLayout()
+        bottom_panel.setLayout(bottom_panel_layout)
+
+        self.gpu_panel = GpuPanel()
+        #self.gpu_panel.setGeometry(35, 390, 230, 50)
+        bottom_panel_layout.addWidget(self.gpu_panel)
 
         self.network_panel = NetworkPanel(self.panel_1)
-        self.network_panel.setGeometry(280, 395, 250, 51)
+        #self.network_panel.setGeometry(280, 395, 250, 51)
+        bottom_panel_layout.addWidget(self.network_panel)
 
-        GuiHelper.create_label(self.panel_1, 551, 390, text="Memory", font_size=18)
-        self.progress_mem_load = GuiHelper.create_progressbar(parent=self.panel_1, x=551, y=421, width=203, height=20)
+        memory_panel = QWidget()
+        memory_panel_layout = QVBoxLayout()
+        memory_panel.setLayout(memory_panel_layout)
+        
+        memory_panel_layout.addWidget(GuiHelper.create_label(memory_panel, text="Memory", font_size=18))
+        self.progress_mem_load = GuiHelper.create_progressbar()
+        memory_panel_layout.addWidget(self.progress_mem_load)
+        bottom_panel_layout.addWidget(memory_panel)
         
         self.btn_right = GuiHelper.create_button(parent=self.panel_1, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page("Forward"))
 
