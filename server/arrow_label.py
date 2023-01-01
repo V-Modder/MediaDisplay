@@ -1,11 +1,9 @@
 from enum import IntEnum
-import random
-import sys
 import typing
 
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QPaintEvent, QPainter, QPainterPath, QPolygonF, QColor, QBrush, QGradient
-from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QVBoxLayout, QGridLayout
+from PyQt5.QtWidgets import QWidget
 
 class Direction(IntEnum):
     UP = 0
@@ -17,7 +15,7 @@ class ArrowLabel(QWidget) :
     arrow_color : typing.Union[QBrush, QColor, Qt.GlobalColor, QGradient]
     arrow_direction : Direction
 
-    def __init__(self, parent: QWidget, color: typing.Union[QBrush, QColor, Qt.GlobalColor, QGradient], direction: Direction) -> None:
+    def __init__(self, color: typing.Union[QBrush, QColor, Qt.GlobalColor, QGradient], direction: Direction, parent: QWidget = None) -> None:
         super().__init__(parent)
         self.arrow_color = color
         self.arrow_direction = direction
@@ -32,12 +30,12 @@ class ArrowLabel(QWidget) :
 
     def paintEvent(self, a0: QPaintEvent) -> None:
         painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.HighQualityAntialiasing, True)
 
         painter.save()
         painter.translate(self.width() // 2, self.height() // 2)
         painter.rotate(int(self.arrow_direction))
         
-
         if self.arrow_direction == Direction.UP or self.arrow_direction == Direction.DOWN:
             width = self.width()
             height = self.height()
@@ -75,6 +73,11 @@ class ArrowLabel(QWidget) :
         return super().paintEvent(a0)
 
 if __name__ == "__main__":
+    import random
+    import sys
+    import time
+    from PyQt5.QtWidgets import QApplication, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout
+
     app = QApplication(sys.argv)
     w = QWidget()
     main_layout = QVBoxLayout()
@@ -84,7 +87,7 @@ if __name__ == "__main__":
     btn_layout = QGridLayout()
     btnw.setLayout(btn_layout)
 
-    b1 = QPushButton("up")
+    b1 = QPushButton("Up")
     b1.clicked.connect(lambda:arrow.set_direction(Direction.UP))
     btn_layout.addWidget(b1, 0, 0)
 
@@ -100,15 +103,23 @@ if __name__ == "__main__":
     b4.clicked.connect(lambda:arrow.set_direction(Direction.RIGHT))
     btn_layout.addWidget(b4, 1, 1)
 
-    random.seed()
+    random.seed(time.time())
     b5 = QPushButton("Random color")
     b5.clicked.connect(lambda:arrow.set_color(QColor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
     btn_layout.addWidget(b5, 2, 0, 1, 2)
 
     main_layout.addWidget(btnw)
 
-    arrow = ArrowLabel(w, Qt.GlobalColor.red, Direction.UP)
-    main_layout.addWidget(arrow)
+    arw_panel = QWidget()
+    arw_layout = QHBoxLayout()
+    arw_panel.setLayout(arw_layout)
+
+    arrow = ArrowLabel(Qt.GlobalColor.red, Direction.UP)
+    arw_layout.addWidget(arrow)
+
+    arw_layout.addWidget(ArrowLabel(Qt.GlobalColor.green, Direction.DOWN))
+
+    main_layout.addWidget(arw_panel)
 
     w.setFixedSize(400, 400)
     w.setWindowTitle("PyQt5")

@@ -1,7 +1,9 @@
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPaintEvent, QPainter
 from PyQt5.QtWidgets import QGridLayout, QWidget
 
 from metric.metric import Network
+from server.arrow_label import ArrowLabel, Direction
 from server.gui_helper import GuiHelper
 
 class NetworkPanel(QWidget):
@@ -12,8 +14,10 @@ class NetworkPanel(QWidget):
         grid = QGridLayout()
         grid.setContentsMargins(0, 0, 0, 0)
         
-        grid.addWidget(GuiHelper.create_label(text="Down"), 0, 0)
-        grid.addWidget(GuiHelper.create_label(text="Up"), 1, 0)
+        #grid.addWidget(GuiHelper.create_label(text="Down"), 0, 0)
+        #grid.addWidget(GuiHelper.create_label(text="Up"), 1, 0)
+        grid.addWidget(ArrowLabel(Qt.GlobalColor.green, Direction.DOWN), 0, 0)
+        grid.addWidget(ArrowLabel(Qt.GlobalColor.red, Direction.UP), 1, 0)
         self.label_net_down = GuiHelper.create_label(text="0")
         self.label_net_up = GuiHelper.create_label(text="0")
 
