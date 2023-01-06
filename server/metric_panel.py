@@ -1,0 +1,94 @@
+import logging
+from typing import Protocol
+
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QVBoxLayout, QWidget
+
+from metric.metric import Metric
+from server.cpu_panel import CpuPanel
+from server.gpu_panel import GpuPanel
+from server.gui_helper import GuiHelper
+from server.network_panel import NetworkPanel
+
+logger = logging.getLogger(__name__)
+
+class MetricProtocol():
+    def receive(self, data:Metric) -> None:
+        ...
+
+class MetricPanel(QWidget, MetricProtocol):
+    cpu_panel : CpuPanel
+    gpu_panel : GpuPanel
+    network_panel : NetworkPanel
+    progress_mem_load : QProgressBar
+    receive_signal = pyqtSignal(Metric)
+
+    def __init__(self) -> None:
+        super(QWidget).__init__()
+        background_1 = QLabel(self)
+        background_1.setGeometry(0, 0, 800, 480)
+        background_1.setStyleSheet("background-image: url(server/resource/page_1.jpg);")
+
+        self.cpu_panel = CpuPanel(self)
+        self.cpu_panel.setGeometry(26, 25, 748, 350)
+
+        bottom_panel = QWidget(self)
+        #bottom_panel.setStyleSheet("QWidget { border-color: red; border-width: 2px; border-style: solid;}")
+        bottom_panel.setGeometry(35, 390, 730, 50)
+        bottom_panel_layout = QHBoxLayout()
+        bottom_panel_layout.setContentsMargins(0, 0, 0, 0)
+        bottom_panel.setLayout(bottom_panel_layout)
+
+        self.gpu_panel = GpuPanel()
+        bottom_panel_layout.addWidget(self.gpu_panel, 31)
+
+        self.network_panel = NetworkPanel()
+        bottom_panel_layout.addWidget(self.network_panel, 38)
+
+        memory_panel = QWidget()
+        memory_panel_layout = QVBoxLayout()
+        memory_panel_layout.setContentsMargins(0, 0, 9, 0)
+        memory_panel.setLayout(memory_panel_layout)
+        
+        memory_panel_layout.addWidget(GuiHelper.create_label(memory_panel, text="Memory", font_size=18), 60)
+
+        self.progress_mem_load = GuiHelper.create_progressbar()
+        memory_panel_layout.addWidget(self.progress_mem_load, 30)
+
+        bottom_panel_layout.addWidget(memory_panel, 31)
+
+        self.receive_signal.connect(self.receive_gui)
+    
+    def receive(self, data:Metric) -> None:
+        self.receive_signal.emit(data)
+
+    def receive_gui(self, data:Metric) -> None:
+        if self.is_updating == False:
+            self.is_updating = True
+            try:
+                self.udpate_gui(data)
+            except Exception as e:
+                logger.error(e)
+            finally:
+                self.is_updating = False
+        else: 
+            logger.error("Gui is locked")
+    
+    def udpate_gui(self, data:Metric) -> None:
+        i = 0
+        for cpu in data.cpus:
+            self.cpu_panel.update_value(i, cpu)
+            i += 1
+
+        self.progress_mem_load.setValue(data.memory_load)
+        
+        if data.gpu is not None:
+            self.gpu_panel.show_gui(True)
+            self.gpu_panel.update_value(data.gpu)
+        else:
+            self.gpu_panel.show_gui(False)
+        
+        if data.network is not None:
+            self.network_panel.update_values(data.network)
+        else:
+            self.network_panel.reset()
