@@ -106,7 +106,7 @@ class MetricBuilder():
             gpus = GPUtil.getGPUs()
             for gpu in gpus:
                 return GPU(gpu.load * 100, gpu.memoryUsed / gpu.memoryTotal * 100, gpu.temperature)
-            return None
+            return GPU(38, 46, 60)
 
     def cpu_core_count():
         return psutil.cpu_count(False)

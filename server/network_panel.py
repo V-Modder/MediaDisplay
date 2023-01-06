@@ -7,11 +7,11 @@ from server.gui_helper import GuiHelper
 
 class NetworkPanel(QWidget):
 
-    def __init__(self, parent) -> None:
+    def __init__(self, parent = None) -> None:
         super().__init__(parent)
 
         grid = QGridLayout()
-        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setContentsMargins(10, 5, 10, 0)
         
         arrow_up = ArrowLabel(Qt.GlobalColor.red, Direction.UP)
         arrow_up.setMaximumWidth(30)

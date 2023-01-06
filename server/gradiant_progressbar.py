@@ -12,6 +12,7 @@ class GradiantProgressBar(QProgressBar):
                                 [.7, Qt.GlobalColor.yellow],
                                 [.87, Qt.GlobalColor.red]
                                 ]
+        self.setMinimumHeight(5)
 
     def paintEvent(self, event):
         painter = QPainter(self)
