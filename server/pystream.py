@@ -23,6 +23,9 @@ from server.server import MetricServer
 
 logger = logging.getLogger(__name__)
 
+CMD_FORWARD = "Forward"
+CMD_BACKWARD = "Backward"
+
 def main() -> None:
     app = QApplication(sys.argv)
     global window 
@@ -90,8 +93,8 @@ class PyStream(QMainWindow, MetricProtocol):
         self.stack.setGeometry(0, 0, 800, 480)
         self.stack.addWidget(button_panel)
 
-        self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page("Backward"))
-        self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page("Forward"))
+        self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page(CMD_BACKWARD))
+        self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page(CMD_FORWARD))
 
         self.set_page_button_visibility()
 
@@ -121,10 +124,10 @@ class PyStream(QMainWindow, MetricProtocol):
         self.button_change_usb.setText(active_usb)
 
     def __change_page(self, direction) -> None:
-        if direction == "Forward":
+        if direction == CMD_FORWARD:
             if self.stack.currentIndex() < self.stack.count() - 1: 
                 self.stack.setCurrentIndex(self.stack.currentIndex() + 1)
-        elif direction == "Backward":
+        elif direction == CMD_BACKWARD:
             if self.stack.currentIndex() > 0: 
                 self.stack.setCurrentIndex(self.stack.currentIndex() - 1)
         
