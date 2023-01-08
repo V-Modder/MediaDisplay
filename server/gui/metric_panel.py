@@ -19,7 +19,7 @@ class MetricPanel(QWidget):
     progress_mem_load : QProgressBar
 
     def __init__(self, cpu_count:int) -> None:
-        super(QWidget).__init__()
+        super().__init__()
         background_1 = QLabel(self)
         background_1.setGeometry(0, 0, 800, 480)
         background_1.setStyleSheet("background-image: url(server/resource/page_1.jpg);")

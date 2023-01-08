@@ -5,41 +5,35 @@ import sys
 import time
 from typing import Dict
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
+from PyQt5.QtCore import pyqtSignal, Qt, QDateTime, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedWidget, QWidget, QHBoxLayout, QVBoxLayout, QToolButton, QGridLayout
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QLabel, QMainWindow, QStackedWidget, QToolButton, QWidget
 
 from Xlib import X
 from Xlib import display
 
 from metric.metric import Metric 
-from server.devices.backlight_controller import BacklightController
-from server.gui.cpu_panel import CpuPanel
-from server.gui.gpu_panel import GpuPanel
-from server.gui.gui_helper import GuiHelper
-from server.metric_panel import MetricPanel
-from server.gui.network_panel import NetworkPanel
-from server.devices.pysense import PySense
-from server.pytemp import PyTemp
+from server.metric_protocol import MetricProtocol
+from server.devices.pytemp import PyTemp
 from server.devices.pyrelay import PyRelay
+from server.devices.pysense import PySense
+from server.gui.gui_helper import GuiHelper
+from server.gui.metric_panel import MetricPanel
 from server.server import MetricServer
 
 logger = logging.getLogger(__name__)
 
-def main():
+def main() -> None:
     app = QApplication(sys.argv)
     global window 
     window = PyStream()
     sys.exit(app.exec())
 
-class MetricProtocol():
-    def receive(self, client_id:str, data:Metric) -> None:
-        ...
-
 class PyStream(QMainWindow, MetricProtocol):
     metric_panels : Dict[str, MetricPanel]
     receive_signal = pyqtSignal(str, Metric)
     reinit_signal = pyqtSignal(str, int)
+    reset_signal = pyqtSignal(str)
 
     def __init__(self) -> None:
         super().__init__()
@@ -51,7 +45,7 @@ class PyStream(QMainWindow, MetricProtocol):
         self.__pysense = PySense()
         self.timer = QTimer()
         self.timer.timeout.connect(self.__timer_tick)
-        self.backlight = BacklightController()
+        
         self.metric_panels = {}
 
         self.initUI()
@@ -106,11 +100,11 @@ class PyStream(QMainWindow, MetricProtocol):
         self.label_time = GuiHelper.create_label(self, 570, 0, width=135, height=30, text="00:00")
         self.label_time.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-        self.restore_gui()
         logger.info("[GUI] Init done")
         self.timer.start(1000)
         self.receive_signal.connect(self.receive_gui)
         self.reinit_signal.connect(self.reinit_gui)
+        self.reset_signal.connect(self.reset_gui)
         self.show()
 
     def is_raspberry_pi(self) -> bool:
@@ -157,37 +151,41 @@ class PyStream(QMainWindow, MetricProtocol):
             self.stack.insertWidget(0, self.metric_panels[client_id])
             self.enable_gui()
         except Exception as e:
-            self.cpu_panel.clear()
+            #self.cpu_panel.clear()
             raise e
 
-    def restore(self, cpu_count:int) -> None:
+    def restore(self, client_id:str, cpu_count:int) -> None:
         self.disable_screensaver()
-        self.reinit_signal.emit(cpu_count)
+        self.reinit_signal.emit(client_id, cpu_count)
 
-    def reset(self) -> None:
+    def reset(self, client_id:str) -> None:
         logger.info("[GUI] Restoring initial image")
+        self.reset_signal.emit(client_id)
+
+    def reset_gui(self, client_id:str) -> None:
+        panel = self.metric_panels.pop(client_id)
+        self.stack.removeWidget(panel)
         self.restore_gui()
-        self.enable_screensaver()
-        self.cpu_panel.clear()
-        self.gpu_panel.show_gui(False)
+        if self.stack.count() == 1:
+            self.enable_screensaver()
+        
+        self.set_page_button_visibility()
+        #self.cpu_panel.clear()
+        #self.gpu_panel.show_gui(False)
 
-    def set_brightness(self, brightness) -> None:
-        self.backlight.set_brightness(brightness)
+    #def set_brightness(self, brightness) -> None:
+    #    self.backlight.set_brightness(brightness)
 
-    def get_brightness(self) -> None:
-        return self.backlight.get_brightness()
+    #def get_brightness(self) -> None:
+    #    return self.backlight.get_brightness()
 
     def enable_gui(self) -> None:
         self.stack.setCurrentIndex(0)
-        self.btn_left.setEnabled(True)
-        self.btn_left.setVisible(True)
+        self.set_page_button_visibility()
 
     def restore_gui(self) -> None:
-        if self.stack.currentIndex() != self.stack.count() - 1:
-            self.stack.setCurrentIndex(self.stack.count() - 1)
-        
-        self.btn_left.setEnabled(False)
-        self.btn_left.setVisible(False)
+        #if self.stack.currentIndex() != 0:
+        self.stack.setCurrentIndex(0)
     
     def disable_screensaver(self) -> None:
         if self.is_raspberry_pi():
@@ -219,4 +217,6 @@ class PyStream(QMainWindow, MetricProtocol):
         show_right = i < self.stack.count() - 1
 
         self.btn_left.setVisible(show_left)
+        self.btn_left.setEnabled(show_left)
         self.btn_right.setVisible(show_right)
+        self.btn_right.setEnabled(show_right)

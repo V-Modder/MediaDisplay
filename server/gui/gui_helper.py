@@ -1,13 +1,14 @@
-from typing import Union
+from typing import Callable, Optional, Union
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import QLabel, QPushButton, QToolButton, QWidget
 
-from server.analoggaugewidget import AnalogGaugeWidget 
-from server.gradiant_progressbar import GradiantProgressBar
+from server.gui.analoggaugewidget import AnalogGaugeWidget 
+from server.gui.gradiant_progressbar import GradiantProgressBar
 
 class GuiHelper():
+    @staticmethod
     def create_gauge(parent, x=None ,y=None) -> AnalogGaugeWidget:
         gauge = AnalogGaugeWidget(parent)
         gauge.set_enable_fine_scaled_marker(False)
@@ -28,6 +29,7 @@ class GuiHelper():
         gauge.set_DisplayValueColor(0, 255, 255)
         return gauge
 
+    @staticmethod
     def create_label(parent=None, x=None, y=None, width=None, height=None, text="", image=None, font_size=15, color="#FFFFFF") -> QLabel:
         label = QLabel(parent)
         label.setText(text)
@@ -41,6 +43,7 @@ class GuiHelper():
 
         return label
 
+    @staticmethod
     def create_progressbar(parent=None, x=None, y=None, width=None, height=None) -> GradiantProgressBar:
         progress = GradiantProgressBar(parent)
         progress.setFormat("")
@@ -51,7 +54,8 @@ class GuiHelper():
 
         return progress
     
-    def create_button(parent=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[QPushButton, QToolButton]=QPushButton, font_size=15, color="#FFFFFF") -> Union[QPushButton, QToolButton]:
+    @staticmethod
+    def create_button(parent:Optional[QWidget]=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[Callable[[QWidget], QPushButton], Callable[[QWidget], QToolButton]]=QPushButton, font_size=15, color="#FFFFFF") -> Union[QPushButton, QToolButton]:
         button = button_type(parent)
         button.setCheckable(checkable)
         
@@ -89,6 +93,7 @@ class GuiHelper():
 
         return button
 
+    @staticmethod
     def __set_size(widget:QWidget, x=None, y=None, width=None, height=None) -> None:
         if (width is None or height is None) and x is not None and y is not None:
             widget.move(x, y)
@@ -101,6 +106,7 @@ class GuiHelper():
         elif width is None and height is not None and (x is None or y is  None):
             widget.setFixedHeight(height)
     
+    @staticmethod
     def __get_font(font_size) -> QFont:
         font = QFont("Decorative", font_size)
         font.setBold(True)
