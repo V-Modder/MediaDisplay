@@ -3,8 +3,8 @@ from PyQt5.QtGui import QResizeEvent, QPaintEvent, QPainter, QImage
 from PyQt5.QtWidgets import QLabel, QWidget
 
 from metric.metric import CPU
-from server.gui_helper import GuiHelper
-from server.analoggaugewidget import AnalogGaugeWidget
+from server.gui.gui_helper import GuiHelper
+from server.gui.analoggaugewidget import AnalogGaugeWidget
 
 class CpuGauge(QWidget):
     value : int

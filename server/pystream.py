@@ -3,6 +3,7 @@ import platform
 import pyautogui
 import sys
 import time
+from typing import Dict
 
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QDateTime
 from PyQt5.QtGui import QIcon, QCloseEvent
@@ -12,14 +13,15 @@ from Xlib import X
 from Xlib import display
 
 from metric.metric import Metric 
-from server.backlight_controller import BacklightController
-from server.cpu_panel import CpuPanel
-from server.gpu_panel import GpuPanel
-from server.gui_helper import GuiHelper
-from server.network_panel import NetworkPanel
-from server.pysense import PySense
+from server.devices.backlight_controller import BacklightController
+from server.gui.cpu_panel import CpuPanel
+from server.gui.gpu_panel import GpuPanel
+from server.gui.gui_helper import GuiHelper
+from server.metric_panel import MetricPanel
+from server.gui.network_panel import NetworkPanel
+from server.devices.pysense import PySense
 from server.pytemp import PyTemp
-from server.pyrelay import PyRelay
+from server.devices.pyrelay import PyRelay
 from server.server import MetricServer
 
 logger = logging.getLogger(__name__)
@@ -30,11 +32,16 @@ def main():
     window = PyStream()
     sys.exit(app.exec())
 
-class PyStream(QMainWindow):
-    receive_signal = pyqtSignal(Metric)
-    reinit_signal = pyqtSignal(int)
+class MetricProtocol():
+    def receive(self, client_id:str, data:Metric) -> None:
+        ...
 
-    def __init__(self):
+class PyStream(QMainWindow, MetricProtocol):
+    metric_panels : Dict[str, MetricPanel]
+    receive_signal = pyqtSignal(str, Metric)
+    reinit_signal = pyqtSignal(str, int)
+
+    def __init__(self) -> None:
         super().__init__()
         self.__server = MetricServer(self)
         self.__server.start()
@@ -42,16 +49,15 @@ class PyStream(QMainWindow):
         self.__temp = PyTemp()
         self.__temp.start()
         self.__pysense = PySense()
-        self.__stats_tab_index = 0
-        self.__buttons_tab_index = 1
         self.timer = QTimer()
         self.timer.timeout.connect(self.__timer_tick)
         self.backlight = BacklightController()
-        
+        self.metric_panels = {}
+
         self.initUI()
         self.enable_screensaver()
 
-    def initUI(self):
+    def initUI(self) -> None:
         logger.info("[GUI] Init main frame")
         if self.is_raspberry_pi():
             self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -65,52 +71,11 @@ class PyStream(QMainWindow):
 
         self.is_updating = False
 
-        self.stack = QStackedWidget(self)
-        self.stack.setGeometry(0, 0, 800, 480)
-        self.panel_1 = QWidget()
-        self.panel_2 = QWidget()
-        self.stack.addWidget(self.panel_1)
-        self.stack.addWidget(self.panel_2)
-
-        #####################
-        ##### Panel 1
-        background_1 = QLabel(self.panel_1)
-        background_1.setGeometry(0, 0, 800, 480)
-        background_1.setStyleSheet("background-image: url(server/resource/page_1.jpg);")
-
-        self.cpu_panel = CpuPanel(self.panel_1)
-        self.cpu_panel.setGeometry(26, 25, 748, 350)
-
-        bottom_panel = QWidget(self.panel_1)
-        #bottom_panel.setStyleSheet("QWidget { border-color: red; border-width: 2px; border-style: solid;}")
-        bottom_panel.setGeometry(35, 390, 730, 50)
-        bottom_panel_layout = QHBoxLayout()
-        bottom_panel_layout.setContentsMargins(0, 0, 0, 0)
-        bottom_panel.setLayout(bottom_panel_layout)
-
-        self.gpu_panel = GpuPanel()
-        bottom_panel_layout.addWidget(self.gpu_panel, 31)
-
-        self.network_panel = NetworkPanel()
-        bottom_panel_layout.addWidget(self.network_panel, 38)
-
-        memory_panel = QWidget()
-        memory_panel_layout = QVBoxLayout()
-        memory_panel_layout.setContentsMargins(0, 0, 9, 0)
-        memory_panel.setLayout(memory_panel_layout)
-        
-        memory_panel_layout.addWidget(GuiHelper.create_label(memory_panel, text="Memory", font_size=18), 60)
-
-        self.progress_mem_load = GuiHelper.create_progressbar()
-        memory_panel_layout.addWidget(self.progress_mem_load, 30)
-
-        bottom_panel_layout.addWidget(memory_panel, 31)
-        
-        self.btn_right = GuiHelper.create_button(parent=self.panel_1, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page("Forward"))
-
         #####################
         ##### Panel 2
-        background_2 = QLabel(self.panel_2)
+        button_panel = QWidget()
+        
+        background_2 = QLabel(button_panel)
         background_2.setGeometry(0, 0, 800, 480)
         background_2.setStyleSheet("background-image: url(server/resource/page_2.jpg);")
 
@@ -124,10 +89,17 @@ class PyStream(QMainWindow):
         grid.addWidget(GuiHelper.create_button(width=100, height=120, image="laptop.png", click=lambda:self.__relay.toggle_relay(PyRelay.BIG_1), checkable=True))
         grid.addStretch()
 
-        self.panel_2.setLayout(grid)
-
-        self.btn_left = GuiHelper.create_button(parent=self.panel_2, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page("Backward"))
+        button_panel.setLayout(grid)
         #####################
+
+        self.stack = QStackedWidget(self)
+        self.stack.setGeometry(0, 0, 800, 480)
+        self.stack.addWidget(button_panel)
+
+        self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page("Backward"))
+        self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page("Forward"))
+
+        self.set_page_button_visibility()
 
         self.label_room_temp = GuiHelper.create_label(self, 97, 0, width=137, height=30, text="--°C")
         self.label_room_temp.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -144,7 +116,7 @@ class PyStream(QMainWindow):
     def is_raspberry_pi(self) -> bool:
         return platform.machine() == 'armv7l'
 
-    def __timer_tick(self):
+    def __timer_tick(self) -> None:
         time = QDateTime.currentDateTime()
         timeDisplay = time.toString('hh:mm')
         temp = self.__temp.temperature
@@ -154,7 +126,7 @@ class PyStream(QMainWindow):
         self.label_room_temp.setText("%1.0f°C" % temp)
         self.button_change_usb.setText(active_usb)
 
-    def __change_page(self, direction):
+    def __change_page(self, direction) -> None:
         if direction == "Forward":
             if self.stack.currentIndex() < self.stack.count() - 1: 
                 self.stack.setCurrentIndex(self.stack.currentIndex() + 1)
@@ -162,30 +134,13 @@ class PyStream(QMainWindow):
             if self.stack.currentIndex() > 0: 
                 self.stack.setCurrentIndex(self.stack.currentIndex() - 1)
 
-    def udpate_gui(self, data:Metric):
-        i = 0
-        for cpu in data.cpus:
-            self.cpu_panel.update_value(i, cpu)
-            i += 1
-
-        self.progress_mem_load.setValue(data.memory_load)
-        
-        if data.gpu is not None:
-            self.gpu_panel.show_gui(True)
-            self.gpu_panel.update_value(data.gpu)
-        else:
-            self.gpu_panel.show_gui(False)
-        
-        if data.network is not None:
-            self.network_panel.update_values(data.network)
-        else:
-            self.network_panel.reset()
-
-    def receive_gui(self, data:Metric):
+    def receive_gui(self, client_id:str, data:Metric) -> None:
         if self.is_updating == False:
             self.is_updating = True
             try:
-                self.udpate_gui(data)
+                 panel = self.metric_panels.get(client_id)
+                 if panel is not None:
+                    panel.receive(data)
             except Exception as e:
                 logger.error(e)
             finally:
@@ -193,47 +148,48 @@ class PyStream(QMainWindow):
         else: 
             logger.error("Gui is locked")
 
-    def receive(self, data:Metric):
-        self.receive_signal.emit(data)
+    def receive(self, client_id:str, data:Metric) -> None:
+        self.receive_signal.emit(client_id, data)
 
-    def reinit_gui(self, data:int):
+    def reinit_gui(self, client_id:str, data:int) -> None:
         try:
-            self.cpu_panel.create_cpus(data)
+            self.metric_panels[client_id] = MetricPanel(data)
+            self.stack.insertWidget(0, self.metric_panels[client_id])
             self.enable_gui()
         except Exception as e:
             self.cpu_panel.clear()
             raise e
 
-    def restore(self, cpu_count:int):
+    def restore(self, cpu_count:int) -> None:
         self.disable_screensaver()
         self.reinit_signal.emit(cpu_count)
 
-    def reset(self):
+    def reset(self) -> None:
         logger.info("[GUI] Restoring initial image")
         self.restore_gui()
         self.enable_screensaver()
         self.cpu_panel.clear()
         self.gpu_panel.show_gui(False)
 
-    def set_brightness(self, brightness):
+    def set_brightness(self, brightness) -> None:
         self.backlight.set_brightness(brightness)
 
-    def get_brightness(self):
+    def get_brightness(self) -> None:
         return self.backlight.get_brightness()
 
-    def enable_gui(self):
-        self.stack.setCurrentIndex(self.__stats_tab_index)
+    def enable_gui(self) -> None:
+        self.stack.setCurrentIndex(0)
         self.btn_left.setEnabled(True)
         self.btn_left.setVisible(True)
 
-    def restore_gui(self):
-        if self.stack.currentIndex() != self.__buttons_tab_index:
-            self.stack.setCurrentIndex(self.__buttons_tab_index)
+    def restore_gui(self) -> None:
+        if self.stack.currentIndex() != self.stack.count() - 1:
+            self.stack.setCurrentIndex(self.stack.count() - 1)
         
         self.btn_left.setEnabled(False)
         self.btn_left.setVisible(False)
     
-    def disable_screensaver(self):
+    def disable_screensaver(self) -> None:
         if self.is_raspberry_pi():
             disp = display.Display()
             disp.set_screen_saver(0, 0, X.DontPreferBlanking, X.AllowExposures)
@@ -245,7 +201,7 @@ class PyStream(QMainWindow):
             time.sleep(0.5)
             pyautogui.moveRel(-step, 0)
 
-    def enable_screensaver(self):
+    def enable_screensaver(self) -> None:
         if self.is_raspberry_pi():
             disp = display.Display()
             screensaver = disp.get_screen_saver()
@@ -256,3 +212,11 @@ class PyStream(QMainWindow):
     def closeEvent(self, a0: QCloseEvent) -> None:
         self.__server.stop()
         return super().closeEvent(a0)
+
+    def set_page_button_visibility(self) -> None:
+        i = self.stack.currentIndex()
+        show_left = i >= 1
+        show_right = i < self.stack.count() - 1
+
+        self.btn_left.setVisible(show_left)
+        self.btn_right.setVisible(show_right)

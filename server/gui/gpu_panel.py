@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPaintEvent, QPainter, QImage
 from PyQt5.QtWidgets import QWidget, QGridLayout
 
 from metric.metric import GPU
-from server.gui_helper import GuiHelper
+from server.gui.gui_helper import GuiHelper
 
 class GpuPanel(QWidget):
     __show_label : bool

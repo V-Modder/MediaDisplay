@@ -2,8 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGridLayout, QWidget
 
 from metric.metric import Network
-from server.arrow_label import ArrowLabel, Direction
-from server.gui_helper import GuiHelper
+from server.gui.arrow_label import ArrowLabel, Direction
+from server.gui.gui_helper import GuiHelper
 
 class NetworkPanel(QWidget):
 

@@ -2,7 +2,7 @@ from typing import List
 
 from PyQt5.QtWidgets import QGridLayout, QWidget
 
-from server.cpu_gauge import CpuGauge
+from server.gui.cpu_gauge import CpuGauge
 
 class CpuPanel(QWidget):
     cpus: List[CpuGauge]
