@@ -127,6 +127,8 @@ class PyStream(QMainWindow, MetricProtocol):
         elif direction == "Backward":
             if self.stack.currentIndex() > 0: 
                 self.stack.setCurrentIndex(self.stack.currentIndex() - 1)
+        
+        self.set_page_button_visibility()
 
     def receive_gui(self, client_id:str, data:Metric) -> None:
         if self.is_updating == False:
