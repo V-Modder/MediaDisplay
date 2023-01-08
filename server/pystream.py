@@ -151,7 +151,6 @@ class PyStream(QMainWindow, MetricProtocol):
             self.stack.insertWidget(0, self.metric_panels[client_id])
             self.enable_gui()
         except Exception as e:
-            #self.cpu_panel.clear()
             raise e
 
     def restore(self, client_id:str, cpu_count:int) -> None:
@@ -170,22 +169,14 @@ class PyStream(QMainWindow, MetricProtocol):
             self.enable_screensaver()
         
         self.set_page_button_visibility()
-        #self.cpu_panel.clear()
-        #self.gpu_panel.show_gui(False)
-
-    #def set_brightness(self, brightness) -> None:
-    #    self.backlight.set_brightness(brightness)
-
-    #def get_brightness(self) -> None:
-    #    return self.backlight.get_brightness()
 
     def enable_gui(self) -> None:
         self.stack.setCurrentIndex(0)
         self.set_page_button_visibility()
 
     def restore_gui(self) -> None:
-        #if self.stack.currentIndex() != 0:
-        self.stack.setCurrentIndex(0)
+        if self.stack.currentIndex() != 0:
+            self.stack.setCurrentIndex(0)
     
     def disable_screensaver(self) -> None:
         if self.is_raspberry_pi():
