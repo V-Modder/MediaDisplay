@@ -1,7 +1,6 @@
 import logging
-from typing import Protocol
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QVBoxLayout, QWidget
 
 from metric.metric import Metric
@@ -23,6 +22,9 @@ class MetricPanel(QWidget):
         background_1 = QLabel(self)
         background_1.setGeometry(0, 0, 800, 480)
         background_1.setStyleSheet("background-image: url(server/resource/page_1.jpg);")
+
+        self.lbl_hostname = GuiHelper.create_label(self, 0, 0, self.width, self.height, text="Hostname", font_size=10)
+        self.lbl_hostname.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
 
         self.cpu_panel = CpuPanel(self)
         self.cpu_panel.setGeometry(26, 25, 748, 350)
@@ -71,3 +73,5 @@ class MetricPanel(QWidget):
             self.network_panel.update_values(data.network)
         else:
             self.network_panel.reset()
+
+        self.lbl_hostname.setText(data.hostname)

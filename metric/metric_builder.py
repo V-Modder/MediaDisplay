@@ -1,8 +1,9 @@
 import os 
 if os.name == 'nt': import clr
 import GPUtil
-import psutil
+import platform
 from pathlib import Path
+import psutil
 
 from metric.metric import Metric, CPU, GPU, Network
 
@@ -58,6 +59,8 @@ class MetricBuilder():
         met.network = Network((net_io_2.bytes_sent - net_io.bytes_sent) * (1.0 / interval), (net_io_2.bytes_recv - net_io.bytes_recv) * (1.0 / interval))
 
         met.gpu = self.fetch_gpu()
+
+        met.network = platform.node()
 
         return met
 
