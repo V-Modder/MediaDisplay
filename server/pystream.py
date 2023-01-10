@@ -3,7 +3,7 @@ import platform
 import pyautogui
 import sys
 import time
-from typing import Dict
+from typing import Dict, Protocol
 
 from PyQt5.QtCore import pyqtSignal, Qt, QDateTime, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent
@@ -13,7 +13,6 @@ from Xlib import X
 from Xlib import display
 
 from metric.metric import Metric 
-from server.pystream_protocol import PyStreamProtocol
 from server.devices.pytemp import PyTemp
 from server.devices.pyrelay import PyRelay
 from server.devices.pysense import PySense
@@ -32,7 +31,26 @@ def main() -> None:
     window = PyStream()
     sys.exit(app.exec())
 
-class PyStream(QMainWindow, PyStreamProtocol):
+class PyStreamPresenterProtocol(Protocol):
+    def init_server(self, presenter:PyStreamPresenter) -> None:
+        ...
+
+    def close(self) -> None:
+        ...
+
+    def desklamp_click(self) -> None:
+        ...
+
+    def usb_switch_activate(self) -> None:
+        ...
+    
+    def usb_switch_deactivate(self) -> None:
+        ...
+
+    def laptop_click(self) -> None:
+        ...
+
+class PyStream(QMainWindow):
     metric_panels : Dict[str, MetricPanel]
     receive_signal = pyqtSignal(str, Metric)
     reinit_signal = pyqtSignal(str, int)
@@ -69,7 +87,7 @@ class PyStream(QMainWindow, PyStreamProtocol):
         self.is_updating = False
 
         #####################
-        ##### Panel 2
+        ##### Button Panel
         button_panel = QWidget()
         
         background_2 = QLabel(button_panel)
