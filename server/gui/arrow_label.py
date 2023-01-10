@@ -1,7 +1,7 @@
 from enum import IntEnum
 import typing
 
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import QPointF, Qt
 from PyQt5.QtGui import QPaintEvent, QPainter, QPainterPath, QPolygonF, QColor, QBrush, QGradient
 from PyQt5.QtWidgets import QWidget
 
@@ -39,29 +39,29 @@ class ArrowLabel(QWidget) :
         if self.arrow_direction == Direction.UP or self.arrow_direction == Direction.DOWN:
             width = self.width()
             height = self.height()
-            painter.translate(self.width() // -2, self.height() // -2)
+            painter.translate(self.width() / -2, self.height() / -2)
         else:
             width = self.height()
             height = self.width()
-            painter.translate(self.height() // -2, self.width() // -2)
+            painter.translate(self.height() / -2, self.width() / -2)
             
         polygon = QPolygonF()
         # start at tip
-        polygon.append(QPoint(width // 2, 0))
+        polygon.append(QPointF(width / 2, 0))
         # go right
-        polygon.append(QPoint(width, round(height * 0.33)))
+        polygon.append(QPointF(width, height * 0.33))
         # go to middle
-        polygon.append(QPoint(width - round(width * 0.25), round(height * 0.33)))
+        polygon.append(QPointF(width - width * 0.25, height * 0.33))
         # go down
-        polygon.append(QPoint(width - round(width * 0.25), height))
+        polygon.append(QPointF(width - width * 0.25, height))
         # go down
-        polygon.append(QPoint(round(width * 0.25), height))
+        polygon.append(QPointF(width * 0.25, height))
         # go up
-        polygon.append(QPoint(round(width * 0.25), round(height * 0.33)))
+        polygon.append(QPointF(width * 0.25, height * 0.33))
         # go left
-        polygon.append(QPoint(0, round(height * 0.33)))
+        polygon.append(QPointF(0, height * 0.33))
         # go to start
-        polygon.append(QPoint(width // 2, 0))
+        polygon.append(QPointF(width / 2, 0))
 
         path = QPainterPath()
         path.addPolygon(polygon)

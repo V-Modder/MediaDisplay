@@ -5,7 +5,6 @@ except:
     pass
 
 class BacklightController:
-    __backlight:Backlight
 
     def __init__(self) -> None:
         try:
