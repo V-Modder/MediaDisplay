@@ -1,6 +1,6 @@
 from metric.metric import Metric
 
-class MetricProtocol():
+class PyStreamProtocol():
     def receive(self, client_id:str, data:Metric) -> None:
         ...
     

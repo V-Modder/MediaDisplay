@@ -1,3 +1,4 @@
+from typing import Protocol
 import eventlet
 import eventlet.wsgi
 from flask import Flask, request
@@ -6,23 +7,34 @@ import logging
 from threading import Thread
 
 from metric.metric import Metric
-from server.metric_protocol import MetricProtocol
 from server.devices.backlight_controller import BacklightController
 
 logger = logging.getLogger(__name__)
 
+class PyStreamPresenterProtocol(Protocol):
+    def receive(self, client_id:str, data:Metric) -> None:
+        ...
+    
+    def restore(self, client_id:str, cpu_count:int) -> None:
+        ...
+    
+    def reset(self, client_id:str) -> None:
+        ...
+
 class MetricServer(Namespace, Thread):
     _app : Flask
-    __receiver : MetricProtocol
+    __presenter : PyStreamPresenterProtocol
     
-    def __init__(self, receiver:MetricProtocol) -> None:
+    def __init__(self) -> None:
         super(Namespace, self).__init__()
         Thread.__init__(self)
         self.__app = Flask(__name__)
         socketio = SocketIO(self.__app)
         socketio.on_namespace(self)
-        self.__receiver = receiver
         self.backlight = BacklightController()
+
+    def init_server(self, presenter:PyStreamPresenterProtocol) -> None:
+        self.__presenter = presenter
 
     def run(self) -> None:
         logger.info("Starting server at 0.0.0.0:5001")
@@ -40,7 +52,7 @@ class MetricServer(Namespace, Thread):
         #else:
         #self._connected_clients.append(request.sid)
         try:
-            self.__receiver.restore(str(request.sid), int(request.headers["Cpu-Count"]))
+            self.__presenter.restore(str(request.sid), int(request.headers["Cpu-Count"]))
         except Exception as e:
             logger.error("Error connecting", exc_info=True)
 
@@ -51,7 +63,7 @@ class MetricServer(Namespace, Thread):
         #    self._connected_clients.remove(request.sid)
         #else:
         try:
-            self.__receiver.reset(str(request.sid))
+            self.__presenter.reset(str(request.sid))
         except Exception as e:
             logger.error("Error disconnecting", exc_info=True)
 
@@ -75,6 +87,6 @@ class MetricServer(Namespace, Thread):
         logger.debug('Received Metric')
         try:
             metric = Metric.deserialize(message)
-            self.__receiver.receive(str(request.sid), metric)
+            self.__presenter.receive(str(request.sid), metric)
         except Exception as e:
             logger.error("Error receiving metric", exc_info=True)

@@ -13,7 +13,7 @@ from Xlib import X
 from Xlib import display
 
 from metric.metric import Metric 
-from server.metric_protocol import MetricProtocol
+from server.pystream_protocol import PyStreamProtocol
 from server.devices.pytemp import PyTemp
 from server.devices.pyrelay import PyRelay
 from server.devices.pysense import PySense
@@ -32,7 +32,7 @@ def main() -> None:
     window = PyStream()
     sys.exit(app.exec())
 
-class PyStream(QMainWindow, MetricProtocol):
+class PyStream(QMainWindow, PyStreamProtocol):
     metric_panels : Dict[str, MetricPanel]
     receive_signal = pyqtSignal(str, Metric)
     reinit_signal = pyqtSignal(str, int)
@@ -51,10 +51,10 @@ class PyStream(QMainWindow, MetricProtocol):
         
         self.metric_panels = {}
 
-        self.initUI()
+        self.initUi()
         self.enable_screensaver()
 
-    def initUI(self) -> None:
+    def initUi(self) -> None:
         logger.info("[GUI] Init main frame")
         if self.is_raspberry_pi():
             self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
