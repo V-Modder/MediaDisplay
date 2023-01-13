@@ -12,13 +12,13 @@ from server.devices.backlight_controller import BacklightController
 logger = logging.getLogger(__name__)
 
 class PyStreamPresenterProtocol(Protocol):
-    def receive(self, client_id:str, data:Metric) -> None:
+    def on_receive(self, client_id:str, data:Metric) -> None:
         ...
     
-    def restore(self, client_id:str, cpu_count:int) -> None:
+    def on_connect(self, client_id:str, cpu_count:int) -> None:
         ...
     
-    def reset(self, client_id:str) -> None:
+    def on_disconnect(self, client_id:str) -> None:
         ...
 
 class MetricServer(Namespace, Thread):
@@ -52,7 +52,7 @@ class MetricServer(Namespace, Thread):
         #else:
         #self._connected_clients.append(request.sid)
         try:
-            self.__presenter.restore(str(request.sid), int(request.headers["Cpu-Count"]))
+            self.__presenter.on_connect(str(request.sid), int(request.headers["Cpu-Count"]))
         except Exception as e:
             logger.error("Error connecting", exc_info=True)
 
@@ -63,7 +63,7 @@ class MetricServer(Namespace, Thread):
         #    self._connected_clients.remove(request.sid)
         #else:
         try:
-            self.__presenter.reset(str(request.sid))
+            self.__presenter.on_disconnect(str(request.sid))
         except Exception as e:
             logger.error("Error disconnecting", exc_info=True)
 
@@ -87,6 +87,6 @@ class MetricServer(Namespace, Thread):
         logger.debug('Received Metric')
         try:
             metric = Metric.deserialize(message)
-            self.__presenter.receive(str(request.sid), metric)
+            self.__presenter.on_receive(str(request.sid), metric)
         except Exception as e:
             logger.error("Error receiving metric", exc_info=True)

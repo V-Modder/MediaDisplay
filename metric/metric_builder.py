@@ -15,11 +15,11 @@ class MetricBuilder():
         def __init__(self) -> None:
             self.computer = self.initialize_cputhermometer()
         
-        def __del__(self):
+        def __del__(self) -> None:
             if self.computer is not None:
                 self.computer.Close()
 
-        def initialize_cputhermometer(self):
+        def initialize_cputhermometer(self) -> Hardware.Computer:
             file = str(Path(__file__).parent.absolute()) + '\\OpenHardwareMonitorLib.dll'
             clr.AddReference(str(file))
 
@@ -40,8 +40,8 @@ class MetricBuilder():
         perc = 0
         cpu_ratio = psutil.cpu_count(True) / psutil.cpu_count(False)
         percentage = 0
-
-        for i, percentage in enumerate(psutil.cpu_percent(percpu=True, interval=interval)):
+        
+        for i, percentage in enumerate(psutil.cpu_percent(percpu=True, interval=interval)): # type: ignore 
             if i % cpu_ratio == 0:
                 met.cpus.append(CPU((percentage + perc) / (100 * cpu_ratio) * 100))
             else:
@@ -53,20 +53,20 @@ class MetricBuilder():
             index += 1
 
         svmem = psutil.virtual_memory()
-        met.memory_load = svmem.percent
+        met.memory_load = int(svmem.percent)
 
         net_io_2 = psutil.net_io_counters()
-        met.network = Network((net_io_2.bytes_sent - net_io.bytes_sent) * (1.0 / interval), (net_io_2.bytes_recv - net_io.bytes_recv) * (1.0 / interval))
+        met.network = Network(int((net_io_2.bytes_sent - net_io.bytes_sent) * (1.0 / interval)), int((net_io_2.bytes_recv - net_io.bytes_recv) * (1.0 / interval)))
 
         met.gpu = self.fetch_gpu()
 
-        met.network = platform.node()
+        met.hostname = platform.node()
 
         return met
 
 
     if os.name == 'nt':
-        def fetch_temperatures(self):
+        def fetch_temperatures(self) -> list[float]:
             result = []
             for h in self.computer.Hardware:
                 if int(h.HardwareType) == MetricBuilder.HWTYPES.index('CPU'):
@@ -78,7 +78,7 @@ class MetricBuilder():
 
             return result
     else:
-        def fetch_temperatures(self):
+        def fetch_temperatures(self) -> list[float]:
             result = []
             for temp in psutil.sensors_temperatures()["coretemp"]:
                 if temp.label.startswith("Core"):
@@ -87,7 +87,7 @@ class MetricBuilder():
             return result
 
     if os.name == 'nt':
-        def fetch_gpu(self):
+        def fetch_gpu(self) -> GPU:
             for h in self.computer.Hardware:
                 if int(h.HardwareType) == MetricBuilder.HWTYPES.index('GpuNvidia'):
                     h.Update()
@@ -105,11 +105,12 @@ class MetricBuilder():
                     return gpu
             return None
     else:
-        def fetch_gpu(self):
+        def fetch_gpu(self) -> GPU:
             gpus = GPUtil.getGPUs()
             for gpu in gpus:
                 return GPU(gpu.load * 100, gpu.memoryUsed / gpu.memoryTotal * 100, gpu.temperature)
             return GPU(38, 46, 60)
 
-    def cpu_core_count():
+    @staticmethod
+    def cpu_core_count() -> int:
         return psutil.cpu_count(False)

@@ -23,9 +23,9 @@ class MetricPanel(QWidget):
         background_1.setGeometry(0, 0, 800, 480)
         background_1.setStyleSheet("background-image: url(server/resource/page_1.jpg);")
 
-        self.lbl_hostname = GuiHelper.create_label(self, 0, 0, self.width, self.height, text="Hostname", font_size=10)
-        self.lbl_hostname.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
-
+        self.lbl_hostname = GuiHelper.create_label(self, 0, 0, self.width(), self.height(), text="Hostname", font_size=10)
+        self.lbl_hostname.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop) # type: ignore
+ 
         self.cpu_panel = CpuPanel(self)
         self.cpu_panel.setGeometry(26, 25, 748, 350)
         self.cpu_panel.create_cpus(cpu_count)

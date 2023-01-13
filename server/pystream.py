@@ -1,40 +1,23 @@
+from enum import Enum
 import logging
-import platform
-import pyautogui
-import sys
-import time
 from typing import Dict, Protocol
 
-from PyQt5.QtCore import pyqtSignal, Qt, QDateTime, QTimer
+from PyQt5.QtCore import pyqtSignal, Qt, QMetaObject, pyqtSlot, Q_ARG
 from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QLabel, QMainWindow, QStackedWidget, QToolButton, QWidget
-
-from Xlib import X
-from Xlib import display
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QMainWindow, QStackedWidget, QToolButton, QWidget
 
 from metric.metric import Metric 
-from server.devices.pytemp import PyTemp
-from server.devices.pyrelay import PyRelay
-from server.devices.pysense import PySense
 from server.gui.gui_helper import GuiHelper
 from server.gui.metric_panel import MetricPanel
-from server.server import MetricServer
+from server.os.platform import Platform
 
 logger = logging.getLogger(__name__)
 
-CMD_FORWARD = "Forward"
-CMD_BACKWARD = "Backward"
-
-def main() -> None:
-    app = QApplication(sys.argv)
-    global window 
-    window = PyStream()
-    sys.exit(app.exec())
+class PageDirection(Enum):
+    FORWARD = 1
+    BACKWARD = 2
 
 class PyStreamPresenterProtocol(Protocol):
-    def init_server(self, presenter:PyStreamPresenter) -> None:
-        ...
-
     def close(self) -> None:
         ...
 
@@ -51,30 +34,21 @@ class PyStreamPresenterProtocol(Protocol):
         ...
 
 class PyStream(QMainWindow):
+    presenter:PyStreamPresenterProtocol
     metric_panels : Dict[str, MetricPanel]
     receive_signal = pyqtSignal(str, Metric)
-    reinit_signal = pyqtSignal(str, int)
-    reset_signal = pyqtSignal(str)
+    add_metric_page_signal = pyqtSignal(str, int)
+    remove_metric_page_signal = pyqtSignal(str)
 
     def __init__(self) -> None:
         super().__init__()
-        self.__server = MetricServer(self)
-        self.__server.start()
-        self.__relay = PyRelay()
-        self.__temp = PyTemp()
-        self.__temp.start()
-        self.__pysense = PySense()
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.__timer_tick)
         
         self.metric_panels = {}
 
-        self.initUi()
-        self.enable_screensaver()
-
-    def initUi(self) -> None:
+    def init_ui(self, presenter:PyStreamPresenterProtocol) -> None:
+        self.presenter = presenter
         logger.info("[GUI] Init main frame")
-        if self.is_raspberry_pi():
+        if Platform.is_raspberry_pi():
             self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
             self.setGeometry(0, 0, 800, 480)
             self.setCursor(Qt.CursorShape.BlankCursor)
@@ -96,12 +70,12 @@ class PyStream(QMainWindow):
 
         grid = QHBoxLayout()
         grid.addStretch()
-        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="desk_lamp.png", click=lambda:self.__relay.toggle_relay(PyRelay.BIG_2), checkable=True))
+        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="desk_lamp.png", click=self.presenter.desklamp_click, checkable=True))
         grid.addStretch()
-        self.button_change_usb = GuiHelper.create_button(width=100, height=140, text="1", image="keyboard.png", press=lambda:self.__relay.activate_relay(PyRelay.SMALL_1), release=lambda:self.__relay.deactivate_relay(PyRelay.SMALL_1), button_type=QToolButton)
+        self.button_change_usb = GuiHelper.create_button(width=100, height=140, text="1", image="keyboard.png", press=self.presenter.usb_switch_activate, release=self.presenter.usb_switch_deactivate, button_type=QToolButton)
         grid.addWidget(self.button_change_usb)
         grid.addStretch()
-        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="laptop.png", click=lambda:self.__relay.toggle_relay(PyRelay.BIG_1), checkable=True))
+        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="laptop.png", click=self.presenter.laptop_click, checkable=True))
         grid.addStretch()
 
         button_panel.setLayout(grid)
@@ -111,8 +85,8 @@ class PyStream(QMainWindow):
         self.stack.setGeometry(0, 0, 800, 480)
         self.stack.addWidget(button_panel)
 
-        self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page(CMD_BACKWARD))
-        self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page(CMD_FORWARD))
+        self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page(PageDirection.BACKWARD))
+        self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page(PageDirection.FORWARD))
 
         self.set_page_button_visibility()
 
@@ -122,35 +96,27 @@ class PyStream(QMainWindow):
         self.label_time.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
         logger.info("[GUI] Init done")
-        self.timer.start(1000)
-        self.receive_signal.connect(self.receive_gui)
-        self.reinit_signal.connect(self.reinit_gui)
-        self.reset_signal.connect(self.reset_gui)
         self.show()
 
-    def is_raspberry_pi(self) -> bool:
-        return platform.machine() == 'armv7l'
-
-    def __timer_tick(self) -> None:
-        time = QDateTime.currentDateTime()
-        timeDisplay = time.toString('hh:mm')
-        temp = self.__temp.temperature
-        active_usb = "2" if self.__pysense.check_state(PySense.INPUT_1) else "1"
-
-        self.label_time.setText(timeDisplay)
-        self.label_room_temp.setText("%1.0f°C" % temp)
-        self.button_change_usb.setText(active_usb)
-
-    def __change_page(self, direction) -> None:
-        if direction == CMD_FORWARD:
+    def __change_page(self, direction:PageDirection) -> None:
+        if direction == PageDirection.FORWARD:
             if self.stack.currentIndex() < self.stack.count() - 1: 
                 self.stack.setCurrentIndex(self.stack.currentIndex() + 1)
-        elif direction == CMD_BACKWARD:
+        elif direction == PageDirection.BACKWARD:
             if self.stack.currentIndex() > 0: 
                 self.stack.setCurrentIndex(self.stack.currentIndex() - 1)
         
         self.set_page_button_visibility()
 
+    def update_text(self, time:str, temp:str, active_usb:str) -> None:
+        self.label_time.setText(time)
+        self.label_room_temp.setText(temp)
+        self.button_change_usb.setText(active_usb)
+
+    def receive(self, client_id:str, data:Metric) -> None:
+        self.invoke_method("receive_gui", client_id, data)
+
+    @pyqtSlot(str, Metric)
     def receive_gui(self, client_id:str, data:Metric) -> None:
         if self.is_updating == False:
             self.is_updating = True
@@ -165,64 +131,35 @@ class PyStream(QMainWindow):
         else: 
             logger.error("Gui is locked")
 
-    def receive(self, client_id:str, data:Metric) -> None:
-        self.receive_signal.emit(client_id, data)
+    def add_metric_page(self, client_id:str, cpu_count:int) -> None:
+        self.invoke_method("add_metric_page_gui", client_id, cpu_count)
 
-    def reinit_gui(self, client_id:str, data:int) -> None:
+    @pyqtSlot(str, int)
+    def add_metric_page_gui(self, client_id:str, cpu_count:int) -> None:
         try:
-            self.metric_panels[client_id] = MetricPanel(data)
+            self.metric_panels[client_id] = MetricPanel(cpu_count)
             self.stack.insertWidget(0, self.metric_panels[client_id])
-            self.enable_gui()
+            self.stack.setCurrentIndex(0)
+            self.set_page_button_visibility()
         except Exception as e:
             raise e
 
-    def restore(self, client_id:str, cpu_count:int) -> None:
-        self.disable_screensaver()
-        self.reinit_signal.emit(client_id, cpu_count)
+    def remove_metric_page(self, client_id:str) -> None:
+        self.invoke_method("remove_metric_page_gui", client_id)
 
-    def reset(self, client_id:str) -> None:
+    @pyqtSlot(str)
+    def remove_metric_page_gui(self, client_id:str) -> None:
         logger.info("[GUI] Restoring initial image")
-        self.reset_signal.emit(client_id)
-
-    def reset_gui(self, client_id:str) -> None:
         panel = self.metric_panels.pop(client_id)
         self.stack.removeWidget(panel)
-        self.restore_gui()
-        if self.stack.count() == 1:
-            self.enable_screensaver()
         
-        self.set_page_button_visibility()
-
-    def enable_gui(self) -> None:
-        self.stack.setCurrentIndex(0)
-        self.set_page_button_visibility()
-
-    def restore_gui(self) -> None:
         if self.stack.currentIndex() != 0:
             self.stack.setCurrentIndex(0)
-    
-    def disable_screensaver(self) -> None:
-        if self.is_raspberry_pi():
-            disp = display.Display()
-            disp.set_screen_saver(0, 0, X.DontPreferBlanking, X.AllowExposures)
-            disp.sync()
-            step = 1
-            if pyautogui.position().x <= disp.screen()["height_in_pixels"]:
-                step *= -1
-            pyautogui.moveRel(step, 0)
-            time.sleep(0.5)
-            pyautogui.moveRel(-step, 0)
-
-    def enable_screensaver(self) -> None:
-        if self.is_raspberry_pi():
-            disp = display.Display()
-            screensaver = disp.get_screen_saver()
-            if screensaver.timeout != 60:
-                disp.set_screen_saver(60, 60, X.DefaultBlanking, X.AllowExposures)
-                disp.sync()
-
+        
+        self.set_page_button_visibility()
+ 
     def closeEvent(self, a0: QCloseEvent) -> None:
-        self.__server.stop()
+        self.presenter.close()
         return super().closeEvent(a0)
 
     def set_page_button_visibility(self) -> None:
@@ -234,3 +171,21 @@ class PyStream(QMainWindow):
         self.btn_left.setEnabled(show_left)
         self.btn_right.setVisible(show_right)
         self.btn_right.setEnabled(show_right)
+
+    @property
+    def metric_panel_count(self) -> int:
+        return len(self.metric_panels)
+    
+    def invoke_method(self, methode:str, *args) -> None:
+        if len(args) == 0:
+            QMetaObject.invokeMethod(self, methode)
+        elif len(args) == 1:
+            QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]))
+        elif len(args) == 2:
+            QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]))
+        elif len(args) == 3:
+            QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]), Q_ARG(type(args[2]), args[2]))
+        elif len(args) == 4:
+            QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]), Q_ARG(type(args[2]), args[2]), Q_ARG(type(args[3]), args[3]))
+        elif len(args) == 5:
+            QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]), Q_ARG(type(args[2]), args[2]), Q_ARG(type(args[3]), args[3]), Q_ARG(type(args[4]), args[4]))

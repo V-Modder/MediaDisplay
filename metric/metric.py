@@ -1,14 +1,13 @@
-from typing import List
-from typing import Any
+from typing import List, Any, Optional
 from dataclasses import dataclass
 import json
 
 @dataclass
 class Network(object):
-    up: int
-    down: int
+    up: Optional[int]
+    down: Optional[int]
 
-    def __init__(self, up: str = None, down: str = None):
+    def __init__(self, up: Optional[int] = None, down: Optional[int] = None) -> None:
         self.up = up
         self.down = down
     
@@ -33,13 +32,15 @@ class Network(object):
             if bytes < factor:
                 return f"{bytes:.2f}{unit}{suffix}"
             bytes /= factor
+        
+        return bytes
 
 @dataclass
 class CPU(object):
-    load: int
-    temperature: float
+    load: Optional[int]
+    temperature: Optional[float]
 
-    def __init__(self, load: int = None, temperature: float = None) -> None:
+    def __init__(self, load: Optional[int] = None, temperature: Optional[float] = None) -> None:
         self.load = load
         self.temperature = temperature
 
@@ -54,11 +55,11 @@ class CPU(object):
 
 @dataclass
 class GPU(object):
-    load: int
-    memory_load: int
-    temperature: float
+    load: Optional[int]
+    memory_load: Optional[int]
+    temperature: Optional[float]
 
-    def __init__(self, load: int = None, memory_load: int = None, temperature: float = None) -> None:
+    def __init__(self, load: Optional[int] = None, memory_load: Optional[int] = None, temperature: Optional[float] = None) -> None:
         self.load = load
         self.memory_load = memory_load
         self.temperature = temperature
@@ -75,13 +76,13 @@ class GPU(object):
 
 @dataclass
 class Metric(object):
-    cpus: List[CPU]
-    gpu: GPU
-    memory_load: int
-    network: Network
-    hostname: str
+    cpus: Optional[List[CPU]]
+    gpu: Optional[GPU]
+    memory_load: Optional[int]
+    network: Optional[Network]
+    hostname: Optional[str]
 
-    def __init__(self, cpu: List[CPU] = None, gpu: GPU = None, memory_load: int = None, network: Network = None, hostname: str = None) -> None:
+    def __init__(self, cpu: Optional[List[CPU]] = None, gpu: Optional[GPU] = None, memory_load: Optional[int] = None, network: Optional[Network] = None, hostname: Optional[str] = None) -> None:
         self.cpus = cpu
         self.gpu = gpu
         self.memory_load = memory_load
@@ -118,11 +119,11 @@ class Metric(object):
     def deserialize(dump: str):
         return Metric.from_dict(json.loads(dump))
 
-    def serialize(self):
+    def serialize(self) -> str:
         return json.dumps(self.__dict__, cls=MetricEncoder)
 
 class MetricEncoder(json.JSONEncoder):
-  def default(self, o):
+  def default(self, o) -> dict[str, Any] | Any:
     try:
         if isinstance(o, Metric) or isinstance(o, GPU) or isinstance(o, CPU) or isinstance(o, Network):
             return o.__dict__
