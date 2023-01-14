@@ -56,7 +56,7 @@ class GuiHelper():
     
     @staticmethod
     def create_button(parent:Optional[QWidget]=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[Callable[[QWidget], QPushButton], Callable[[QWidget], QToolButton]]=QPushButton, font_size=15, color="#FFFFFF") -> Union[QPushButton, QToolButton]:
-        button = button_type(parent)
+        button = button_type(parent)# type: ignore
         button.setCheckable(checkable)
         
         GuiHelper.__set_size(button, x, y, width, height)
@@ -86,9 +86,9 @@ class GuiHelper():
             button.released.connect(release)
 
         if button_type == QPushButton:
-            button.setFlat(True)
+            button.setFlat(True)# type: ignore
         elif button_type == QToolButton:
-            button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+            button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)# type: ignore
             button.setStyleSheet("border: none; color: %s;" % color)
 
         return button

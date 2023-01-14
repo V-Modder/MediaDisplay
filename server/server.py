@@ -24,7 +24,8 @@ class PyStreamPresenterProtocol(Protocol):
 class MetricServer(Namespace, Thread):
     _app : Flask
     __presenter : PyStreamPresenterProtocol
-    
+    socketio : SocketIO
+
     def __init__(self) -> None:
         super(Namespace, self).__init__()
         Thread.__init__(self)
@@ -45,14 +46,14 @@ class MetricServer(Namespace, Thread):
         eventlet.kill(Exception())
 
     def on_connect(self) -> None:
-        logger.info("socket connected, " + str(request.sid))
+        logger.info("socket connected, " + str(request.sid)) # type: ignore 
         logger.debug("Headers: " + str(request.headers))
         #if len(self._connected_clients) > 0:
         #    self.disconnect()
         #else:
         #self._connected_clients.append(request.sid)
         try:
-            self.__presenter.on_connect(str(request.sid), int(request.headers["Cpu-Count"]))
+            self.__presenter.on_connect(str(request.sid), int(request.headers["Cpu-Count"])) # type: ignore 
         except Exception as e:
             logger.error("Error connecting", exc_info=True)
 
@@ -63,7 +64,7 @@ class MetricServer(Namespace, Thread):
         #    self._connected_clients.remove(request.sid)
         #else:
         try:
-            self.__presenter.on_disconnect(str(request.sid))
+            self.__presenter.on_disconnect(str(request.sid)) # type: ignore 
         except Exception as e:
             logger.error("Error disconnecting", exc_info=True)
 
@@ -87,6 +88,6 @@ class MetricServer(Namespace, Thread):
         logger.debug('Received Metric')
         try:
             metric = Metric.deserialize(message)
-            self.__presenter.on_receive(str(request.sid), metric)
+            self.__presenter.on_receive(str(request.sid), metric) # type: ignore 
         except Exception as e:
             logger.error("Error receiving metric", exc_info=True)

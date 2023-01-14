@@ -57,11 +57,14 @@ class MetricPanel(QWidget):
     
     def receive(self, data:Metric) -> None:
         i = 0
-        for cpu in data.cpus:
-            self.cpu_panel.update_value(i, cpu)
-            i += 1
+        if data.cpus is None:
+            self.cpu_panel.reset_all()
+        else:
+            for cpu in data.cpus:
+                self.cpu_panel.update_value(i, cpu)
+                i += 1
 
-        self.progress_mem_load.setValue(data.memory_load)
+        self.progress_mem_load.setValue(0 if data.memory_load is None else data.memory_load)
         
         if data.gpu is not None:
             self.gpu_panel.show_gui(True)
@@ -74,4 +77,4 @@ class MetricPanel(QWidget):
         else:
             self.network_panel.reset()
 
-        self.lbl_hostname.setText(data.hostname)
+        self.lbl_hostname.setText("" if data.hostname is None else data.hostname)
