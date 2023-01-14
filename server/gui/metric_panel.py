@@ -23,7 +23,7 @@ class MetricPanel(QWidget):
         background_1.setGeometry(0, 0, 800, 480)
         background_1.setStyleSheet("background-image: url(server/resource/page_1.jpg);")
 
-        self.lbl_hostname = GuiHelper.create_label(self, 0, 0, self.width(), self.height(), text="Hostname", font_size=10)
+        self.lbl_hostname = GuiHelper.create_label(self, 0, 0, 800, 480, text="Hostname", font_size=10)
         self.lbl_hostname.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop) # type: ignore
  
         self.cpu_panel = CpuPanel(self)
@@ -77,4 +77,4 @@ class MetricPanel(QWidget):
         else:
             self.network_panel.reset()
 
-        self.lbl_hostname.setText("" if data.hostname is None else data.hostname)
+        self.lbl_hostname.setText("" if data.hostname is None else data.hostname.strip())
