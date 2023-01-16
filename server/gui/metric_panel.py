@@ -1,41 +1,47 @@
 import logging
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QVBoxLayout, QWidget
+from PyQt5.QtGui import QResizeEvent
+from PyQt5.QtWidgets import QHBoxLayout, QProgressBar, QVBoxLayout, QWidget
 
 from metric.metric import Metric
 from server.gui.cpu_panel import CpuPanel
 from server.gui.gpu_panel import GpuPanel
 from server.gui.gui_helper import GuiHelper
 from server.gui.network_panel import NetworkPanel
+from server.gui.stack_panel import StackPanel
 
 logger = logging.getLogger(__name__)
 
-class MetricPanel(QWidget):
+class MetricPanel(StackPanel):
     cpu_panel : CpuPanel
     gpu_panel : GpuPanel
     network_panel : NetworkPanel
     progress_mem_load : QProgressBar
 
-    def __init__(self, cpu_count:int) -> None:
+    def __init__(self, name, cpu_count:int) -> None:
         super().__init__()
-        background_1 = QLabel(self)
-        background_1.setGeometry(0, 0, 800, 480)
-        background_1.setStyleSheet("background-image: url(server/resource/page_1.jpg);")
+        self.set_panel_name(name)
+        self.setObjectName("metric_panel")
+        self.setStyleSheet("""StackPanel#metric_panel {
+            border-image: url(server/resource/page_metric.jpg) 0 0 0 0 stretch stretch;
+        }""")
 
-        self.lbl_hostname = GuiHelper.create_label(self, 0, 0, 800, 480, text="Hostname", font_size=10)
-        self.lbl_hostname.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop) # type: ignore
- 
-        self.cpu_panel = CpuPanel(self)
-        self.cpu_panel.setGeometry(26, 25, 748, 350)
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(main_layout)
+
+        self.cpu_panel = CpuPanel()
+        #self.cpu_panel.setGeometry(26, 25, 748, 350) # 0,729166666667%
         self.cpu_panel.create_cpus(cpu_count)
+        main_layout.addWidget(self.cpu_panel, 729166667)
 
-        bottom_panel = QWidget(self)
+        bottom_panel = QWidget()
         #bottom_panel.setStyleSheet("QWidget { border-color: red; border-width: 2px; border-style: solid;}")
-        bottom_panel.setGeometry(35, 390, 730, 50)
+        #bottom_panel.setGeometry(35, 390, 730, 50) # 0,104166666667%
         bottom_panel_layout = QHBoxLayout()
         bottom_panel_layout.setContentsMargins(0, 0, 0, 0)
         bottom_panel.setLayout(bottom_panel_layout)
+        main_layout.addWidget(bottom_panel, 104166667)
 
         self.gpu_panel = GpuPanel()
         bottom_panel_layout.addWidget(self.gpu_panel, 31)
@@ -76,5 +82,3 @@ class MetricPanel(QWidget):
             self.network_panel.update_values(data.network)
         else:
             self.network_panel.reset()
-
-        self.lbl_hostname.setText("" if data.hostname is None else data.hostname.strip())

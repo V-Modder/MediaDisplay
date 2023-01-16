@@ -19,7 +19,7 @@ class PyStreamProtocol(Protocol):
     def receive(self, client_id:str, data:Metric) -> None:
         ...
     
-    def add_metric_page(self, client_id:str, cpu_count:int) -> None:
+    def add_metric_page(self, client_id:str, name:str, cpu_count:int) -> None:
         ...
     
     def remove_metric_page(self, client_id:str) -> None:
@@ -92,9 +92,9 @@ class PyStreamPresenter:
     def on_receive(self, client_id:str, data:Metric) -> None:
         self.view.receive(client_id, data)
     
-    def on_connect(self, client_id:str, cpu_count:int) -> None:
+    def on_connect(self, client_id:str, name:str, cpu_count:int) -> None:
         Screensaver.disable_screensaver()
-        self.view.add_metric_page(client_id, cpu_count)
+        self.view.add_metric_page(client_id, name, cpu_count)
     
     def on_disconnect(self, client_id:str) -> None:
         self.view.remove_metric_page(client_id)

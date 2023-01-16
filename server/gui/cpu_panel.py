@@ -8,7 +8,7 @@ from server.gui.cpu_gauge import CpuGauge
 class CpuPanel(QWidget):
     cpus: List[CpuGauge]
 
-    def __init__(self, parent) -> None:
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
         layout = QGridLayout()

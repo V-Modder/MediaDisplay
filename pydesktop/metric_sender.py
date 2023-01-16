@@ -1,4 +1,5 @@
 import logging
+import platform
 from socketio import Client, ClientNamespace
 from threading import Thread
 from time import sleep
@@ -89,7 +90,7 @@ class MetricSender(ClientNamespace):
     def run_client(self) -> None:
         while self.__run_connecting:
             try:
-                self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count())}, transports="websocket")
+                self.client.connect(self.conf.server, headers={"Cpu-Count": str(MetricBuilder.cpu_core_count()), "Client-Name": platform.node()}, transports="websocket")
                 self.client.wait()
             except Exception as e:
                 logger.error("Error running client", exc_info=True)

@@ -80,17 +80,15 @@ class Metric(object):
     gpu: Optional[GPU]
     memory_load: Optional[int]
     network: Optional[Network]
-    hostname: Optional[str]
 
-    def __init__(self, cpu: Optional[List[CPU]] = None, gpu: Optional[GPU] = None, memory_load: Optional[int] = None, network: Optional[Network] = None, hostname: Optional[str] = None) -> None:
+    def __init__(self, cpu: Optional[List[CPU]] = None, gpu: Optional[GPU] = None, memory_load: Optional[int] = None, network: Optional[Network] = None) -> None:
         self.cpus = cpu
         self.gpu = gpu
         self.memory_load = memory_load
         self.network = network
-        self.hostname = hostname
 
     def __str__(self) -> str:
-        return "[Metric: cpus: {},\ngpu: {},\nmemory_load: {},\nnetwork: {},\nHostname: {}]".format(self.cpus, self.gpu, self.memory_load, self.network, self.hostname)
+        return "[Metric: cpus: {},\ngpu: {},\nmemory_load: {},\nnetwork: {}]".format(self.cpus, self.gpu, self.memory_load, self.network)
 
     @staticmethod
     def from_dict(obj: Any) -> 'Metric':
@@ -110,10 +108,8 @@ class Metric(object):
             network = Network.from_dict(obj.get("network"))
         else:
             network = None
-        
-        hostname = str(obj.get("hostname"))
 
-        return Metric(cpus, gpu, memory_load, network, hostname)
+        return Metric(cpus, gpu, memory_load, network)
 
     @staticmethod
     def deserialize(dump: str):

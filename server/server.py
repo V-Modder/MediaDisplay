@@ -15,7 +15,7 @@ class PyStreamPresenterProtocol(Protocol):
     def on_receive(self, client_id:str, data:Metric) -> None:
         ...
     
-    def on_connect(self, client_id:str, cpu_count:int) -> None:
+    def on_connect(self, client_id:str, name:str, cpu_count:int) -> None:
         ...
     
     def on_disconnect(self, client_id:str) -> None:
@@ -48,21 +48,13 @@ class MetricServer(Namespace, Thread):
     def on_connect(self) -> None:
         logger.info("socket connected, " + str(request.sid)) # type: ignore 
         logger.debug("Headers: " + str(request.headers))
-        #if len(self._connected_clients) > 0:
-        #    self.disconnect()
-        #else:
-        #self._connected_clients.append(request.sid)
         try:
-            self.__presenter.on_connect(str(request.sid), int(request.headers["Cpu-Count"])) # type: ignore 
+            self.__presenter.on_connect(str(request.sid), request.headers["Client-Name"], int(request.headers["Cpu-Count"])) # type: ignore 
         except Exception as e:
             logger.error("Error connecting", exc_info=True)
 
     def on_disconnect(self) -> None:
         logger.info("socket disconnected")
-        #if request.sid in self._connected_clients:    
-        #    logger.info("Disconnecting, already in use")
-        #    self._connected_clients.remove(request.sid)
-        #else:
         try:
             self.__presenter.on_disconnect(str(request.sid)) # type: ignore 
         except Exception as e:

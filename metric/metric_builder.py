@@ -1,7 +1,6 @@
 import os 
 if os.name == 'nt': import clr
 import GPUtil
-import platform
 from pathlib import Path
 import psutil
 
@@ -60,8 +59,6 @@ class MetricBuilder():
 
         met.gpu = self.fetch_gpu()
 
-        met.hostname = platform.node()
-
         return met
 
 
@@ -109,7 +106,7 @@ class MetricBuilder():
             gpus = GPUtil.getGPUs()
             for gpu in gpus:
                 return GPU(gpu.load * 100, gpu.memoryUsed / gpu.memoryTotal * 100, gpu.temperature)
-            return GPU(38, 46, 60)
+            return None
 
     @staticmethod
     def cpu_core_count() -> int:

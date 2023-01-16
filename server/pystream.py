@@ -2,13 +2,14 @@ from enum import Enum
 import logging
 from typing import Dict, Protocol
 
-from PyQt5.QtCore import pyqtSignal, Qt, QMetaObject, pyqtSlot, Q_ARG
+from PyQt5.QtCore import Qt, QMetaObject, pyqtSlot, Q_ARG
 from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QMainWindow, QStackedWidget, QToolButton, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QStackedWidget, QToolButton, QVBoxLayout, QWidget
 
 from metric.metric import Metric 
 from server.gui.gui_helper import GuiHelper
 from server.gui.metric_panel import MetricPanel
+from server.gui.stack_panel import StackPanel
 from server.os.platform import Platform
 
 logger = logging.getLogger(__name__)
@@ -36,9 +37,6 @@ class PyStreamPresenterProtocol(Protocol):
 class PyStream(QMainWindow):
     presenter:PyStreamPresenterProtocol
     metric_panels : Dict[str, MetricPanel]
-    receive_signal = pyqtSignal(str, Metric)
-    add_metric_page_signal = pyqtSignal(str, int)
-    remove_metric_page_signal = pyqtSignal(str)
 
     def __init__(self) -> None:
         super().__init__()
@@ -53,20 +51,58 @@ class PyStream(QMainWindow):
             self.setGeometry(0, 0, 800, 480)
             self.setCursor(Qt.CursorShape.BlankCursor)
         else:
-            self.setFixedWidth(800)
-            self.setFixedHeight(480)
+            self.resize(800, 480)
         self.setWindowTitle("MediaDisplay-Server")
         self.setWindowIcon(QIcon("server/resource/pyalarm.png"))
 
         self.is_updating = False
 
+        main_panel = QWidget()
+        main_panel.setObjectName("main_panel")
+        self.setCentralWidget(main_panel)
+        main_layout = QVBoxLayout()
+        main_layout.setSpacing(0)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_panel.setLayout(main_layout)
+
+        #####################
+        ##### Header Panel
+        header_panel = QWidget()
+        header_panel.setObjectName("header_panel")
+        header_panel.setStyleSheet("""QWidget#header_panel {
+            border-image: url(server/resource/page_header.jpg) 0 0 0 0 stretch stretch;
+        }""")
+        header_panel_layout = QHBoxLayout()
+        header_panel.setLayout(header_panel_layout)
+        header_panel_layout.setContentsMargins(0, 0, 0, 0)
+        
+        self.label_room_temp = GuiHelper.create_label(x=97, y=0, width=137, height=30, text="--°C")
+        self.label_room_temp.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        header_panel_layout.addWidget(self.label_room_temp)
+
+        self.label_pagename = GuiHelper.create_label(width=135, height=30, text="Pagename", font_size=10)
+        self.label_pagename.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop) # type: ignore
+        header_panel_layout.addWidget(self.label_pagename)
+
+        self.label_time = GuiHelper.create_label(x=570, y=0, width=135, height=30, text="00:00")
+        self.label_time.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        header_panel_layout.addWidget(self.label_time)
+
+        main_layout.addWidget(header_panel, 5625)
+        #####################
+
+        self.stack = QStackedWidget()
+        main_layout.addWidget(self.stack, 94375)
+        
         #####################
         ##### Button Panel
-        button_panel = QWidget()
+        button_panel = StackPanel()
         
-        background_2 = QLabel(button_panel)
-        background_2.setGeometry(0, 0, 800, 480)
-        background_2.setStyleSheet("background-image: url(server/resource/page_2.jpg);")
+        button_panel.set_panel_name("Buttons")
+        button_panel.setObjectName("button_panel")
+        button_panel.setStyleSheet("""StackPanel#button_panel {
+            border-image: url(server/resource/page_button.jpg) 0 0 0 0 stretch stretch;
+        }""")
 
         grid = QHBoxLayout()
         grid.addStretch()
@@ -79,21 +115,13 @@ class PyStream(QMainWindow):
         grid.addStretch()
 
         button_panel.setLayout(grid)
-        #####################
-
-        self.stack = QStackedWidget(self)
-        self.stack.setGeometry(0, 0, 800, 480)
         self.stack.addWidget(button_panel)
+        #####################
 
         self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page(PageDirection.BACKWARD))
         self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page(PageDirection.FORWARD))
 
         self.set_page_button_visibility()
-
-        self.label_room_temp = GuiHelper.create_label(self, 97, 0, width=137, height=30, text="--°C")
-        self.label_room_temp.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.label_time = GuiHelper.create_label(self, 570, 0, width=135, height=30, text="00:00")
-        self.label_time.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
         logger.info("[GUI] Init done")
         self.show()
@@ -131,13 +159,13 @@ class PyStream(QMainWindow):
         else: 
             logger.error("Gui is locked")
 
-    def add_metric_page(self, client_id:str, cpu_count:int) -> None:
-        self.invoke_method("add_metric_page_gui", client_id, cpu_count)
+    def add_metric_page(self, client_id:str, name:str, cpu_count:int) -> None:
+        self.invoke_method("add_metric_page_gui", client_id, name, cpu_count)
 
-    @pyqtSlot(str, int)
-    def add_metric_page_gui(self, client_id:str, cpu_count:int) -> None:
+    @pyqtSlot(str, str, int)
+    def add_metric_page_gui(self, client_id:str, name:str, cpu_count:int) -> None:
         try:
-            self.metric_panels[client_id] = MetricPanel(cpu_count)
+            self.metric_panels[client_id] = MetricPanel(name, cpu_count)
             self.stack.insertWidget(0, self.metric_panels[client_id])
             self.stack.setCurrentIndex(0)
             self.set_page_button_visibility()
@@ -150,13 +178,14 @@ class PyStream(QMainWindow):
     @pyqtSlot(str)
     def remove_metric_page_gui(self, client_id:str) -> None:
         logger.info("[GUI] Restoring initial image")
-        panel = self.metric_panels.pop(client_id)
-        self.stack.removeWidget(panel)
-        
-        if self.stack.currentIndex() != 0:
-            self.stack.setCurrentIndex(0)
-        
-        self.set_page_button_visibility()
+        if self.metric_panels.get(client_id) is not None:
+            panel = self.metric_panels.pop(client_id)
+            self.stack.removeWidget(panel)
+            
+            if self.stack.currentIndex() != 0:
+                self.stack.setCurrentIndex(0)
+            
+            self.set_page_button_visibility()
  
     def closeEvent(self, a0: QCloseEvent) -> None:
         self.presenter.close()
@@ -166,7 +195,13 @@ class PyStream(QMainWindow):
         i = self.stack.currentIndex()
         show_left = i >= 1
         show_right = i < self.stack.count() - 1
+        panel = self.stack.currentWidget()
+        pagename = "Pagename"
+        
+        if isinstance(panel, StackPanel):
+            pagename = panel.get_panel_name()
 
+        self.label_pagename.setText(pagename)
         self.btn_left.setVisible(show_left)
         self.btn_left.setEnabled(show_left)
         self.btn_right.setVisible(show_right)
