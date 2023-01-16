@@ -11,6 +11,7 @@ from server.devices.pysense import PySense
 from server.devices.pytemp import PyTemp
 from server.os.screensaver import Screensaver
 #https://github.com/ArjanCodes/2022-gui/blob/main/mvp
+#https://forum.qt.io/topic/47887/solved-how-to-make-text-font-size-to-be-auto-adjusted/3
 
 class PyStreamProtocol(Protocol):
     def init_ui(self, presenter:PyStreamPresenter) -> None:
