@@ -1,11 +1,13 @@
-import pyautogui
 import time
+
+import pyautogui
 
 from server.os.platform import Platform
 
+logger = logging.getLogger(__name__)
+
 try:
-    from Xlib import X
-    from Xlib import display
+    from Xlib import X, display
 
     class Screensaver:
         @staticmethod
@@ -35,6 +37,7 @@ try:
             time.sleep(0.5)
             pyautogui.moveRel(-step, 0)
 except:
+    logger.info("Xlib not available, cannot change screensaver")
     class Screensaver:
         @staticmethod
         def enable_screensaver() -> None:
