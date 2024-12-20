@@ -1,5 +1,7 @@
 import logging
+import subprocess
 import time
+from typing import List
 
 import pyautogui
 
@@ -7,43 +9,41 @@ from server.os.platform import Platform
 
 logger = logging.getLogger(__name__)
 
-try:
-    from Xlib import X, display
+class Screensaver:
+    SCREENSAVER_TIMEOUT = 60
 
-    class Screensaver:
-        @staticmethod
-        def enable_screensaver() -> None:
-            if Platform.is_raspberry_pi():
-                disp = display.Display()
-                screensaver = disp.get_screen_saver()
-                if screensaver.timeout != 60:
-                    disp.set_screen_saver(60, 60, X.DefaultBlanking, X.AllowExposures)
-                    disp.sync()
+    @staticmethod
+    def enable_screensaver() -> None:
+        if Platform.is_raspberry_pi():
+            Screensaver.disable_screensaver()
+            try:
+                subprocess.run("swayidle -w timeout {} 'wlopm --off \\*' resume 'wlopm --on \\*' &".format(Screensaver.SCREENSAVER_TIMEOUT))
+            except:
+                logger.error("Error running screensaver")
+    
+    @staticmethod
+    def disable_screensaver() -> None:
+        if Platform.is_raspberry_pi():
+            Screensaver.__enable_screen()
+            pids = Screensaver.__get_running_screensavers()
+            for pid in pids:
+                subprocess.run(["kill", pid])
+
+    @staticmethod
+    def __enable_screen() -> None:
+        step = 1
+        if pyautogui.position().x >= 800:
+            step *= -1
+        pyautogui.moveRel(step, 0)
+        time.sleep(0.5)
+        pyautogui.moveRel(-step, 0)
+
+    @staticmethod
+    def __get_running_screensavers() -> List[str]:
+        output = subprocess.check_output("ps axf | grep {} | grep -v grep | awk '{print $1}'".format("swayidle"))
+        result = []
+        for line in output.splitlines():
+            result.append(line.strip())
         
-        @staticmethod
-        def disable_screensaver() -> None:
-            if Platform.is_raspberry_pi():
-                disp = display.Display()
-                if disp.get_screen_saver().timeout != 0:
-                    disp.set_screen_saver(0, 0, X.DontPreferBlanking, X.AllowExposures)
-                    disp.sync()
-                    Screensaver.__enable_screen(disp.screen()["width_in_pixels"])
-
-        @staticmethod
-        def __enable_screen(width:int) -> None:
-            step = 1
-            if pyautogui.position().x <= width:
-                step *= -1
-            pyautogui.moveRel(step, 0)
-            time.sleep(0.5)
-            pyautogui.moveRel(-step, 0)
-except:
-    logger.info("Xlib not available, cannot change screensaver")
-    class Screensaver:
-        @staticmethod
-        def enable_screensaver() -> None:
-            pass
-
-        @staticmethod
-        def disable_screensaver() -> None:
-            pass
+        return result
+        
