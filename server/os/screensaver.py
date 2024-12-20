@@ -40,7 +40,7 @@ class Screensaver:
 
     @staticmethod
     def __get_running_screensavers() -> List[str]:
-        output = subprocess.check_output("ps axf | grep {} | grep -v grep | awk '{print $1}'".format("swayidle"))
+        output = subprocess.check_output("ps axf | grep {} | grep -v grep | awk '{{print $1}}'".format("swayidle"))
         result = []
         for line in output.splitlines():
             result.append(line.strip())
