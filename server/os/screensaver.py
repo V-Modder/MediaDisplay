@@ -17,7 +17,7 @@ class Screensaver:
         if Platform.is_raspberry_pi():
             Screensaver.disable_screensaver()
             try:
-                subprocess.run(["swayidle", "-w", "timeout", str(Screensaver.SCREENSAVER_TIMEOUT), "'wlopm --off \\*'", "resume", "'wlopm --on \\*'", "&"])
+                subprocess.run("swayidle -w timeout {} 'wlopm --off \\*' resume 'wlopm --on \\*' &".format(Screensaver.SCREENSAVER_TIMEOUT), shell=True)
             except:
                 logger.error("Error running screensaver")
     
@@ -40,7 +40,7 @@ class Screensaver:
 
     @staticmethod
     def __get_running_screensavers() -> List[str]:
-        output = subprocess.check_output(["ps", "axf", "|", "grep", "swayidle", "|", "grep", "-v", "grep", "|", "awk", "'{print $1}'"])
+        output = subprocess.check_output("ps axf | grep {} | grep -v grep | awk '{{print $1}}'".format("swayidle"), shell=True)
         result = []
         for line in output.splitlines():
             result.append(line.strip())
