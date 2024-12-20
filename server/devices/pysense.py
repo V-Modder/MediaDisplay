@@ -28,7 +28,7 @@ class PySense:
             return False
         
         dev = self.__senses.get(input_pin)
-        return dev.value() == 0
+        return dev.value == 0
 
 #try:
 #    import RPi.GPIO as GPIO
