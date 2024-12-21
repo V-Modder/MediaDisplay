@@ -1,10 +1,11 @@
+import logging
+from threading import Thread
 from typing import Protocol
+
 import eventlet
 import eventlet.wsgi
 from flask import Flask, request
-from flask_socketio import Namespace, SocketIO 
-import logging
-from threading import Thread
+from flask_socketio import Namespace, SocketIO
 
 from metric.metric import Metric
 from server.devices.backlight_controller import BacklightController
@@ -64,7 +65,7 @@ class MetricServer(Namespace, Thread):
         logger.info('Received get_brightness: ')
         value = 0
         try:
-            value = self.backlight.get_brightness()
+            value = self.backlight.get_brightness() or 0
         except Exception as e:
             logger.error("Error getting brightness", exc_info=True)
         self.emit('receive_brightness', value)
