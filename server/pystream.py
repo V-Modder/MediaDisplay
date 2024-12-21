@@ -1,12 +1,13 @@
-from enum import Enum
 import logging
+from enum import Enum
 from typing import Dict, Protocol
 
-from PyQt5.QtCore import Qt, QMetaObject, pyqtSlot, Q_ARG
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QHBoxLayout, QMainWindow, QStackedWidget, QToolButton, QVBoxLayout, QWidget
+from PyQt5.QtCore import Q_ARG, QMetaObject, Qt, pyqtSlot
+from PyQt5.QtGui import QCloseEvent, QIcon
+from PyQt5.QtWidgets import (QHBoxLayout, QMainWindow, QStackedWidget,
+                             QToolButton, QVBoxLayout, QWidget)
 
-from metric.metric import Metric 
+from metric.metric import Metric
 from server.gui.gui_helper import GuiHelper
 from server.gui.metric_panel import MetricPanel
 from server.gui.stack_panel import StackPanel
@@ -50,6 +51,7 @@ class PyStream(QMainWindow):
             self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
             self.setGeometry(0, 0, 800, 480)
             self.setCursor(Qt.CursorShape.BlankCursor)
+            self.showFullScreen()
         else:
             self.resize(800, 480)
         self.setWindowTitle("MediaDisplay-Server")
