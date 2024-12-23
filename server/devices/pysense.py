@@ -13,6 +13,7 @@ class PySense:
 
     def __init__(self) -> None:
         if not Platform.is_raspberry_pi():
+            logger.info("gpiozero couldn't find gpio's, using dummy sensor")
             Device.pin_factory = MockFactory()
         
         self.__senses = {
@@ -29,21 +30,3 @@ class PySense:
         
         dev = self.__senses.get(input_pin)
         return dev.value == 0
-
-#try:
-#    import RPi.GPIO as GPIO
-#    class PySense(PySenseBase):
-#        def __init__(self):
-#            GPIO.setmode(GPIO.BCM)
-#            GPIO.setup(self.INPUT_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#            GPIO.setup(self.INPUT_2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#
-#        def check_state(self, input_pin) -> bool:
-#            return GPIO.input(input_pin) == 0
-#except:
-#    logger.info("RPi.GPIO couldn't be imported, using dummy sense")
-#    import random
-#    class PySense(PySenseBase):
-#        def check_state(self, input_pin) -> bool:
-#            random.seed(input_pin)
-#            return random.randint(0, 100) % 2 == 0 
