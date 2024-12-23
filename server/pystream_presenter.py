@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import Protocol
+
 import sys
+from typing import Protocol
 
 from PyQt5.QtCore import QDateTime, QTimer
 from PyQt5.QtWidgets import QApplication
@@ -10,6 +11,7 @@ from server.devices.pyrelay import PyRelay
 from server.devices.pysense import PySense
 from server.devices.pytemp import PyTemp
 from server.os.screensaver import Screensaver
+
 #https://github.com/ArjanCodes/2022-gui/blob/main/mvp
 #https://forum.qt.io/topic/47887/solved-how-to-make-text-font-size-to-be-auto-adjusted/3
 
@@ -88,7 +90,7 @@ class PyStreamPresenter:
         temp = self.__temp.temperature
         active_usb = "2" if self.__pysense.check_state(PySense.INPUT_1) else "1"
 
-        self.view.update_text(timeDisplay, "%1.0f°C" % temp, active_usb)
+        self.view.update_text(timeDisplay, "%0.1f°C" % temp, active_usb)
 
     def on_receive(self, client_id:str, data:Metric) -> None:
         self.view.receive(client_id, data)
