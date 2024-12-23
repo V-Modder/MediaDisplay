@@ -11,14 +11,12 @@ logger = logging.getLogger(__name__)
 class PyRelay:
     SMALL_1 = 19
     SMALL_2 = 26
-    BIG_1 = 6
-    BIG_2 = 13
+    BIG_1 = 13
+    BIG_2 = 6
 
     def __init__(self) -> None:
         if not Platform.is_raspberry_pi():
-            #relay.off() # switch off
-            #relay.on() # switch on
-            #print(relay.value) # see if on or off
+            logger.info("gpiozero couldn't find gpio's, using dummy relay")
             Device.pin_factory = MockFactory()
 
         self.__relays = {
@@ -62,39 +60,3 @@ class PyRelay:
 
         dev = self.__relays.get(relay_number)
         dev.toggle()
-        #GPIO.output(relay_number, not GPIO.input(relay_number))
-
-#try:
-#
-#    class PyRelay(PyRelayBase):
-#        def __init__(self):
-#            super().__init__()
-#            #GPIO.setmode(GPIO.BCM)
-#            #GPIO.setup(self.SMALL_1, GPIO.OUT)
-#            #GPIO.setup(self.SMALL_2, GPIO.OUT, initial=GPIO.HIGH)
-#            #GPIO.setup(self.BIG_1, GPIO.OUT, initial=GPIO.LOW)
-#            #GPIO.setup(self.BIG_2, GPIO.OUT, initial=GPIO.LOW)
-#
-#        def activate_relay(self, relay_number):
-#            if self._validate_input(relay_number):
-#                state = GPIO.HIGH
-#                if relay_number in [self.SMALL_1, self.SMALL_2]:
-#                    state = GPIO.LOW
-#                GPIO.output(relay_number, state)
-#                super().activate_relay(relay_number)
-#
-#        def deactivate_relay(self, relay_number):
-#            if self._validate_input(relay_number):
-#                state = GPIO.LOW
-#                if relay_number in [self.SMALL_1, self.SMALL_2]:
-#                    state = GPIO.HIGH
-#                GPIO.output(relay_number, state)
-#                super().deactivate_relay(relay_number)
-#        
-#        def toggle_relay(self, relay_number):
-#            
-#except:
-#    logger.info("RPi.GPIO couldn't be imported, using dummy relay")
-#    class PyRelay(PyRelayBase):
-#        def __init__(self) -> None:
-#            super().__init__()
