@@ -1,16 +1,21 @@
+import logging
 try:
     from rpi_backlight import Backlight
     from rpi_backlight.utils import FakeBacklightSysfs
+    from glob import iglob
 except:
     pass
+
+logger = logging.getLogger(__name__)
 
 class BacklightController:
 
     def __init__(self) -> None:
         try:
-            self.backlight = Backlight()
+            self.backlight = Backlight(next(iglob("/sys/class/backlight/*-0045/"), "/sys/class/backlight/rpi_backlight"))
         except:
             try:
+                logger.info("backlight couldn't find /sys/class/backlight, using dummy path")
                 self.fakeBacklightSysfs = FakeBacklightSysfs()
                 self.fakeBacklightSysfs.__enter__()
                 self.backlight = Backlight(backlight_sysfs_path=self.fakeBacklightSysfs.path)
