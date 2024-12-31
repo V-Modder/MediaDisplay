@@ -182,9 +182,6 @@ class PyStream(QMainWindow):
         self.stack.addWidget(button_panel)
         #####################
 
-        #self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page(PageDirection.BACKWARD))
-        #self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page(PageDirection.FORWARD))
-
         self.set_page_button_visibility()
 
         logger.info("[GUI] Init done")
@@ -264,20 +261,9 @@ class PyStream(QMainWindow):
         
         if isinstance(panel, StackPanel):
             pagename = panel.get_panel_name()
-            #btn_left = panel.findChild(QPushButton, PyStream.BUTTON_LEFT)
-            #if btn_left is not None:
-            #    btn_left.setVisible(show_left)
-            #    btn_left.setEnabled(show_left)
-
-            #btn_right = panel.findChild(QPushButton, PyStream.BUTTON_RIGHT)
-            #if btn_right is not None:
-            #    btn_right.setVisible(show_left)
-            #    btn_right.setEnabled(show_left)
 
         self.label_pagename.setText(pagename)
-        #self.btn_left.setVisible(show_left)
         self.btn_left.setEnabled(show_left)
-        #self.btn_right.setVisible(show_right)
         self.btn_right.setEnabled(show_right)
 
     @property
@@ -297,15 +283,3 @@ class PyStream(QMainWindow):
             QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]), Q_ARG(type(args[2]), args[2]), Q_ARG(type(args[3]), args[3]))
         elif len(args) == 5:
             QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]), Q_ARG(type(args[2]), args[2]), Q_ARG(type(args[3]), args[3]), Q_ARG(type(args[4]), args[4]))
-
-    #def showEvent(self, a0: QShowEvent | None) -> None:
-    #    super().showEvent(a0)
-    #    print("test")
-    #def paintEvent(self, a0: QPaintEvent | None) -> None:
-    #    super().paintEvent(a0)
-
-    #    if self.paint_events < 10:
-    #        if self.paint_events >= PyStream.INIT_BUTTONS_AFTER_PAINT_EVENTS:
-    #            self.set_page_button_visibility()
-    #        else:
-    #            self.paint_events += 1
