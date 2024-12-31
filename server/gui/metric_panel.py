@@ -1,6 +1,7 @@
 import logging
 
-from PyQt5.QtGui import QResizeEvent
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import QHBoxLayout, QProgressBar, QVBoxLayout, QWidget
 
 from metric.metric import Metric
@@ -21,25 +22,26 @@ class MetricPanel(StackPanel):
     def __init__(self, name, cpu_count:int) -> None:
         super().__init__()
         self.set_panel_name(name)
-        self.setObjectName("metric_panel")
-        self.setStyleSheet("""StackPanel#metric_panel {
-            border-image: url(server/resource/page_metric.jpg) 0 0 0 0 stretch stretch;
-        }""")
+        pal = QPalette()
+        pal.setColor(QPalette.ColorRole.Background, Qt.GlobalColor.black)
+        self.setAutoFillBackground(True)
+        self.setPalette(pal)
 
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(main_layout)
 
         self.cpu_panel = CpuPanel()
-        #self.cpu_panel.setGeometry(26, 25, 748, 350) # 0,729166666667%
         self.cpu_panel.create_cpus(cpu_count)
         main_layout.addWidget(self.cpu_panel, 729166667)
 
         bottom_panel = QWidget()
-        #bottom_panel.setStyleSheet("QWidget { border-color: red; border-width: 2px; border-style: solid;}")
-        #bottom_panel.setGeometry(35, 390, 730, 50) # 0,104166666667%
+        bottom_panel.setObjectName("panel_metric_bottom")
+        bottom_panel.setStyleSheet("""#panel_metric_bottom {
+            border-image: url(server/resource/panel_metric_bottom.jpg) 0 0 0 0 stretch stretch;
+        }""")
         bottom_panel_layout = QHBoxLayout()
-        bottom_panel_layout.setContentsMargins(0, 0, 0, 0)
+        bottom_panel_layout.setContentsMargins(5, 20, 0, 0)
         bottom_panel.setLayout(bottom_panel_layout)
         main_layout.addWidget(bottom_panel, 104166667)
 

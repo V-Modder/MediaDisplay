@@ -345,3 +345,4 @@ build/*
 config.json
 metric/OpenHardwareMonitorLib.sys
 dist
+.vscode

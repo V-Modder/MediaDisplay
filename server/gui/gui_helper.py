@@ -4,8 +4,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import QLabel, QPushButton, QToolButton, QWidget
 
-from server.gui.analoggaugewidget import AnalogGaugeWidget 
+from server.gui.analoggaugewidget import AnalogGaugeWidget
 from server.gui.gradiant_progressbar import GradiantProgressBar
+
 
 class GuiHelper():
     @staticmethod
@@ -55,7 +56,7 @@ class GuiHelper():
         return progress
     
     @staticmethod
-    def create_button(parent:Optional[QWidget]=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[Callable[[QWidget], QPushButton], Callable[[QWidget], QToolButton]]=QPushButton, font_size=15, color="#FFFFFF") -> Union[QPushButton, QToolButton]:
+    def create_button(parent:Optional[QWidget]=None, x=None, y=None, width=None, height=None, text=None, image=None, click=None, press=None, release=None, checkable=False, button_type:Union[Callable[[QWidget], QPushButton], Callable[[QWidget], QToolButton]]=QPushButton, font_size=15, color="#FFFFFF", name:Union[str,None]=None) -> Union[QPushButton, QToolButton]:
         button = button_type(parent)# type: ignore
         button.setCheckable(checkable)
         
@@ -73,7 +74,8 @@ class GuiHelper():
                 button.setStyleSheet(stre)
             else:
                 if button_type == QPushButton:
-                    button.setStyleSheet("border-image: url(server/resource/" + image + ");")
+                    button.setIcon(QIcon("server/resource/" + image))
+                    button.setIconSize(button.size())
                 elif button_type == QToolButton:
                     button.setIcon(QIcon("server/resource/" + image))
                     button.setIconSize(button.size())
@@ -90,6 +92,9 @@ class GuiHelper():
         elif button_type == QToolButton:
             button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)# type: ignore
             button.setStyleSheet("border: none; color: %s;" % color)
+
+        if name is not None:
+            button.setObjectName(name)
 
         return button
 

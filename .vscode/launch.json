@@ -6,21 +6,21 @@
     "configurations": [
         {
             "name": "Module pydesktop",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "pydesktop",
             "justMyCode": false
         },
         {
             "name": "Module server",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "server",
             "justMyCode": false
         },
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",

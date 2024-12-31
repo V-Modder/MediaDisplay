@@ -3,11 +3,12 @@ from enum import Enum
 from typing import Dict, Protocol
 
 from PyQt5.QtCore import Q_ARG, QMetaObject, Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent, QIcon
+from PyQt5.QtGui import QCloseEvent, QIcon, QPalette
 from PyQt5.QtWidgets import (QHBoxLayout, QMainWindow, QStackedWidget,
                              QToolButton, QVBoxLayout, QWidget)
 
 from metric.metric import Metric
+from server.gui.chevron_button import ChevronButton
 from server.gui.gui_helper import GuiHelper
 from server.gui.metric_panel import MetricPanel
 from server.gui.stack_panel import StackPanel
@@ -38,10 +39,13 @@ class PyStreamPresenterProtocol(Protocol):
 class PyStream(QMainWindow):
     presenter:PyStreamPresenterProtocol
     metric_panels : Dict[str, MetricPanel]
+    BUTTON_LEFT = "btn_left"
+    BUTTON_RIGHT = "btn_right"
+    INIT_BUTTONS_AFTER_PAINT_EVENTS = 3
 
     def __init__(self) -> None:
         super().__init__()
-        
+        self.paint_events = 0
         self.metric_panels = {}
 
     def init_ui(self, presenter:PyStreamPresenterProtocol) -> None:
@@ -90,38 +94,96 @@ class PyStream(QMainWindow):
         self.label_time.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         header_panel_layout.addWidget(self.label_time)
 
-        main_layout.addWidget(header_panel, 5625)
+        main_layout.addWidget(header_panel, 9)
         #####################
 
+        view_panel = QWidget()
+        view_panel_layout = QHBoxLayout()
+        view_panel_layout.setSpacing(0)
+        view_panel_layout.setContentsMargins(0, 0, 0, 0)
+        
+        panel_left = QWidget()
+        panel_left.setMaximumWidth(28)
+        panel_left.setObjectName("panel_left")
+        panel_left.setStyleSheet("""#panel_left {
+            border-image: url(server/resource/panel_left.jpg) 0 0 0 0 stretch stretch;
+        }""")
+
+        panel_left_layout = QVBoxLayout()
+        panel_left.setLayout(panel_left_layout)
+        panel_left_layout.setSpacing(0)
+        panel_left_layout.setContentsMargins(1, 0, 3, 0)
+        panel_left_layout.addSpacing(20)
+        self.btn_left = GuiHelper.create_button(panel_left, width=18, height=100, button_type=ChevronButton, click=lambda:self.__change_page(PageDirection.BACKWARD))
+        self.btn_left.orientation = ChevronButton.Orientation.Left
+        panel_left_layout.addWidget(self.btn_left, 60)
+        panel_left_layout.addSpacing(20)
+        view_panel_layout.addWidget(panel_left)
+        
+        panel_content = QWidget()
+        panel_content_layout = QVBoxLayout()
+        panel_content_layout.setContentsMargins(0, 0, 0, 0)
         self.stack = QStackedWidget()
-        main_layout.addWidget(self.stack, 94375)
+        panel_content_layout.addWidget(self.stack)
+
+        panel_bottom = QWidget()
+        panel_bottom.setFixedHeight(32)
+        panel_bottom.setObjectName("panel_bottom")
+        panel_bottom.setStyleSheet("""#panel_bottom {
+            border-image: url(server/resource/panel_bottom.jpg) 0 0 0 0 stretch stretch;
+        }""")
+        panel_content_layout.addWidget(panel_bottom)
+        panel_content.setLayout(panel_content_layout)
+        view_panel_layout.addWidget(panel_content)
+        
+        panel_right = QWidget()
+        panel_right.setMaximumWidth(28)
+        panel_right.setObjectName("panel_right")
+        panel_right.setStyleSheet("""#panel_right {
+            border-image: url(server/resource/panel_right.jpg) 0 0 0 0 stretch stretch;
+        }""")
+
+        panel_right_layout = QVBoxLayout()
+        panel_right.setLayout(panel_right_layout)
+        panel_right_layout.setSpacing(0)
+        panel_right_layout.setContentsMargins(3, 0, 1, 0)
+        panel_right_layout.addSpacing(20)
+        self.btn_right = GuiHelper.create_button(panel_right, width=18, height=100, button_type=ChevronButton, click=lambda:self.__change_page(PageDirection.FORWARD))
+        self.btn_right.orientation = ChevronButton.Orientation.Right
+        panel_right_layout.addWidget(self.btn_right, 60)
+        panel_right_layout.addSpacing(20)
+        view_panel_layout.addWidget(panel_right)
+        
+
+        view_panel.setLayout(view_panel_layout)
+
+        main_layout.addWidget(view_panel, 151)
         
         #####################
         ##### Button Panel
         button_panel = StackPanel()
-        
         button_panel.set_panel_name("Buttons")
-        button_panel.setObjectName("button_panel")
-        button_panel.setStyleSheet("""StackPanel#button_panel {
-            border-image: url(server/resource/page_button.jpg) 0 0 0 0 stretch stretch;
-        }""")
+        pal = QPalette()
+        pal.setColor(QPalette.ColorRole.Background, Qt.GlobalColor.black)
+        button_panel.setAutoFillBackground(True)
+        button_panel.setPalette(pal)
 
         grid = QHBoxLayout()
         grid.addStretch()
-        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="desk_lamp.png", click=self.presenter.desklamp_click, checkable=True))
+        grid.addWidget(GuiHelper.create_button(parent=button_panel, width=100, height=120, image="desk_lamp.png", click=self.presenter.desklamp_click, checkable=True))
         grid.addStretch()
-        self.button_change_usb = GuiHelper.create_button(width=100, height=140, text="1", image="keyboard.png", press=self.presenter.usb_switch_activate, release=self.presenter.usb_switch_deactivate, button_type=QToolButton)
+        self.button_change_usb = GuiHelper.create_button(parent=button_panel, width=100, height=140, text="1", image="keyboard.png", press=self.presenter.usb_switch_activate, release=self.presenter.usb_switch_deactivate, button_type=QToolButton)
         grid.addWidget(self.button_change_usb)
         grid.addStretch()
-        grid.addWidget(GuiHelper.create_button(width=100, height=120, image="laptop.png", click=self.presenter.laptop_click, checkable=True))
+        grid.addWidget(GuiHelper.create_button(parent=button_panel, width=100, height=120, image="laptop.png", click=self.presenter.laptop_click, checkable=True))
         grid.addStretch()
 
         button_panel.setLayout(grid)
         self.stack.addWidget(button_panel)
         #####################
 
-        self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page(PageDirection.BACKWARD))
-        self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page(PageDirection.FORWARD))
+        #self.btn_left = GuiHelper.create_button(parent=self, x=0, y=190, width=26, height=100, image="arrow_left.png", click=lambda:self.__change_page(PageDirection.BACKWARD))
+        #self.btn_right = GuiHelper.create_button(parent=self, x=774, y=190, width=26, height=100, image="arrow_right.png", click=lambda:self.__change_page(PageDirection.FORWARD))
 
         self.set_page_button_visibility()
 
@@ -202,11 +264,20 @@ class PyStream(QMainWindow):
         
         if isinstance(panel, StackPanel):
             pagename = panel.get_panel_name()
+            #btn_left = panel.findChild(QPushButton, PyStream.BUTTON_LEFT)
+            #if btn_left is not None:
+            #    btn_left.setVisible(show_left)
+            #    btn_left.setEnabled(show_left)
+
+            #btn_right = panel.findChild(QPushButton, PyStream.BUTTON_RIGHT)
+            #if btn_right is not None:
+            #    btn_right.setVisible(show_left)
+            #    btn_right.setEnabled(show_left)
 
         self.label_pagename.setText(pagename)
-        self.btn_left.setVisible(show_left)
+        #self.btn_left.setVisible(show_left)
         self.btn_left.setEnabled(show_left)
-        self.btn_right.setVisible(show_right)
+        #self.btn_right.setVisible(show_right)
         self.btn_right.setEnabled(show_right)
 
     @property
@@ -226,3 +297,15 @@ class PyStream(QMainWindow):
             QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]), Q_ARG(type(args[2]), args[2]), Q_ARG(type(args[3]), args[3]))
         elif len(args) == 5:
             QMetaObject.invokeMethod(self, methode, Q_ARG(type(args[0]), args[0]), Q_ARG(type(args[1]), args[1]), Q_ARG(type(args[2]), args[2]), Q_ARG(type(args[3]), args[3]), Q_ARG(type(args[4]), args[4]))
+
+    #def showEvent(self, a0: QShowEvent | None) -> None:
+    #    super().showEvent(a0)
+    #    print("test")
+    #def paintEvent(self, a0: QPaintEvent | None) -> None:
+    #    super().paintEvent(a0)
+
+    #    if self.paint_events < 10:
+    #        if self.paint_events >= PyStream.INIT_BUTTONS_AFTER_PAINT_EVENTS:
+    #            self.set_page_button_visibility()
+    #        else:
+    #            self.paint_events += 1
