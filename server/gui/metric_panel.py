@@ -29,6 +29,7 @@ class MetricPanel(StackPanel):
 
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         self.setLayout(main_layout)
 
         self.cpu_panel = CpuPanel()
