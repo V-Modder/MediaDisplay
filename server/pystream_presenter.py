@@ -7,6 +7,7 @@ from PyQt5.QtCore import QDateTime, QTimer
 from PyQt5.QtWidgets import QApplication
 
 from metric.metric import Metric
+from server.config import Config
 from server.devices.pyrelay import PyRelay
 from server.devices.pysense import PySense
 from server.devices.pytemp import PyTemp
@@ -59,6 +60,8 @@ class PyStreamPresenter:
         self.__pysense = PySense()
         self.timer = QTimer()
         self.timer.timeout.connect(self.timer_tick)
+        self.usb_1_name = Config.get().buttons.usb_1_name
+        self.usb_2_name = Config.get().buttons.usb_2_name
 
     def run(self, app:QApplication) -> None:
         self.view.init_ui(self)
@@ -88,7 +91,7 @@ class PyStreamPresenter:
         time = QDateTime.currentDateTime()
         timeDisplay = time.toString('hh:mm')
         temp = self.__temp.temperature
-        active_usb = "2" if self.__pysense.check_state(PySense.INPUT_1) else "1"
+        active_usb = self.usb_2_name if self.__pysense.check_state(PySense.INPUT_1) else self.usb_1_name
 
         self.view.update_text(timeDisplay, "%0.1f°C" % temp, active_usb)
 
