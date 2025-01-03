@@ -5,7 +5,7 @@ import jsonpickle
 FILENAME = "config.json"
 FILENAME_2 = "config2.json"
 
-class Buttons
+class Buttons:
     usb_1_name: str
     usb_2_name: str
 
